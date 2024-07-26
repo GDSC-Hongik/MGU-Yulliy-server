@@ -10,4 +10,4 @@ def restaurant_list(request):
     if request.method == "GET":
         restaurants = Restaurant.objects.all()
         serializer = RestaurantSerializer(restaurants, many=True)
-        return JsonResponse(serializer.data)
+        return JsonResponse(serializer.data, safe=False)
