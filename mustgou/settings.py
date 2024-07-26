@@ -82,7 +82,7 @@ WSGI_APPLICATION = "mustgou.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
-        "NAME": "MuGoU",
+        "NAME": "MustGoU",
         "USER": "root",
         "PASSWORD": config("DB_PASSWORD"),
         "HOST": "127.0.0.1",
