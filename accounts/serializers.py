@@ -25,7 +25,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ("id", "nickname", "email", "password", "checkPassword")
+        fields = ("id", "name", "email", "password", "checkPassword")
 
     def validate(self, data):  # pw와 checkPw 확인
         if data["password"] != data["checkPassword"]:
@@ -35,10 +35,11 @@ class RegisterSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         # CREATE 요청이 들어오면 create 매서드를 오버라이딩하여 유저와 토큰 생성
         user = User.objects.create_user(
-            username=validated_data["nickname"],
+            username=validated_data["email"],
             email=validated_data["email"],
         )
 
+        user.name = validated_data["name"]
         user.set_password(validated_data["password"])
         user.save()
         Token.objects.create(user=user)
@@ -47,7 +48,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
 
 class LoginSerializer(serializers.Serializer):
-    email = serializers.EmailField(required=True)
+    username = serializers.EmailField(required=True)
     # write_only=True 를 통해 클라이언트->서버 만 가능하도록 설정
     password = serializers.CharField(required=True, write_only=True)
 
