@@ -47,6 +47,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         return user
 
 
+# 로그인 시리얼라이저
 class LoginSerializer(serializers.Serializer):
     username = serializers.EmailField(required=True)
     # write_only=True 를 통해 클라이언트->서버 만 가능하도록 설정
