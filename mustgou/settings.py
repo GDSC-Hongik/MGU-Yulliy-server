@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ["*", ".pythonanywhere.com"]
 
@@ -38,11 +38,18 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+  
     # 로그인 기능
     "rest_framework",
     "rest_framework.authtoken",
     "accounts",
     "myapp",
+  
+    "users",
+    "friends",
+    "restaurants",
+    "reviews",
+    "rest_framework",
 ]
 
 MIDDLEWARE = [
@@ -81,8 +88,12 @@ WSGI_APPLICATION = "mustgou.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": "MustGoU",
+        "USER": "root",
+        "PASSWORD": config("DB_PASSWORD"),
+        "HOST": "127.0.0.1",
+        "PORT": "3306",
     }
 }
 
