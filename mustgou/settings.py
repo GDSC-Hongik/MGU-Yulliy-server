@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path, os
 from decouple import config
 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -24,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ["*", ".pythonanywhere.com"]
 
@@ -84,11 +85,12 @@ WSGI_APPLICATION = "mustgou.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
-        "NAME": "MustGoU",
-        "USER": "root",
+        "NAME": "mugou",
+        "USER": "mugou",
         "PASSWORD": config("DB_PASSWORD"),
-        "HOST": "192.168.219.107",
+        "HOST": "mugou.cja0koqyuu4d.ap-northeast-2.rds.amazonaws.com",
         "PORT": "3306",
+        "OPTIONS": {"init_command": 'SET sql_mode="STRICT_TRANS_TABLES"'},
     }
 }
 
