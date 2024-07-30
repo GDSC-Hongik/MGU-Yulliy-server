@@ -19,7 +19,7 @@ class User(AbstractUser):
     reliability = models.IntegerField(default=100)
 
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS = ["name"]
 
     def __str__(self):
         return self.name
