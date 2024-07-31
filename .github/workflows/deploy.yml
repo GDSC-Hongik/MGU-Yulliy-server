@@ -41,5 +41,5 @@ jobs:
         username: ubuntu
         key: ${{ secrets.KEY }}
         script: |
-          sh /home/ubuntu/MGU-Yulliy-server
-          sudo docker-compose up --build -d
+          chmod +x /home/ubuntu/MGU-Yulliy-server/config/scripts/deploy.sh
+          /home/ubuntu/MGU-Yulliy-server/config/scripts/deploy.sh
