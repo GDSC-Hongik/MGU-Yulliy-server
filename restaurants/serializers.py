@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Restaurant, SearchHistory
+from .models import Restaurant, SearchHistory, UserRestaurantList
 
 
 class RestaurantSerializer(serializers.ModelSerializer):
@@ -23,3 +23,11 @@ class SearchHistorySerializer(serializers.ModelSerializer):
     class Meta:
         model = SearchHistory
         fields = ["query", "timestamp"]
+
+
+class UserRestaurantListSerializer(serializers.ModelSerializer):
+    restaurant = RestaurantSerializer()
+
+    class Meta:
+        model = UserRestaurantList
+        fields = "__all__"
