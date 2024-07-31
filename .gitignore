@@ -4,5 +4,6 @@ env/
 db.sqlite3
 .DS_Store
 .env
+.env.prod
 venv/
 mguvenv/
