@@ -1,0 +1,38 @@
+version: '3.12'
+
+services: # 컨테이너 설정
+
+  web: # 컨테이너1 : web
+    container_name: web
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    command: gunicorn mustgou.wsgi:application --bind 0.0.0.0:8000
+    environment:
+      DJANGO_SETTINGS_MODULE: mustgou.settings
+    env_file:
+      - .env
+    volumes:
+      - static:/home/app/web/static
+      - media:/home/app/web/media
+    expose:
+      - 8000
+    entrypoint:
+      - sh
+      - config/docker/entrypoint.sh
+
+  nginx: # 컨테이너2 : nginx
+    container_name: nginx
+    build: ./config/nginx # 여기에는 Dockerfile이 있으며 이 도커파일에서 nginx에 대한 상위 설정파일인 nginx.conf가 있음
+    volumes:
+      - ./config/nginx/nginx.conf:/etc/nginx/conf.d/nginx.conf
+      - static:/home/app/web/static
+      - media:/home/app/web/media
+    ports:
+      - "80:80"
+    depends_on:
+      - web # 웹 컨테이너에 의존 (그래서 web 컨테이너를 먼저 띄운 후, nginx 컨테이너를 띄움)
+
+volumes:
+  static:
+  media:
