@@ -5,6 +5,12 @@ from accounts.models import User
 
 
 class Friend(models.Model):
+    STATE_CHOICES = [
+        ("request", "Request"),
+        ("approve", "Approve"),
+        ("deny", "Deny"),
+    ]
+
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="friends")
     friend = models.ForeignKey(User, on_delete=models.CASCADE, related_name="friend_of")
-    state = models.CharField(max_length=20, null=True, blank=True)
+    state = models.CharField(max_length=20, choices=STATE_CHOICES, default="request")
