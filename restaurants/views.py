@@ -20,22 +20,19 @@ def restaurant_list(request):
 
 
 @api_view(["GET", "POST"])
+@login_required
 def search(request):
     if request.method == "GET":
-        if request.user.is_authenticated:
-            histories = SearchHistory.objects.filter(user=request.user)
-            serializer = SearchHistorySerializer(histories, many=True)
-            return Response({"histories": serializer.data})
-        else:
-            return Response({"error": "User not authenticated"}, status=401)
+        histories = SearchHistory.objects.filter(user=request.user)
+        serializer = SearchHistorySerializer(histories, many=True)
+        return Response({"histories": serializer.data})
 
     elif request.method == "POST":
         query = request.data.get("query", "")
         if not query:
             return Response({"error": "No search query provided"}, status=400)
 
-        if request.user.is_authenticated:
-            SearchHistory.objects.create(user=request.user, query=query)
+        SearchHistory.objects.create(user=request.user, query=query)
 
         restaurants = Restaurant.objects.filter(name__icontains=query)
         serializer = RestaurantListSerializer(restaurants, many=True)
