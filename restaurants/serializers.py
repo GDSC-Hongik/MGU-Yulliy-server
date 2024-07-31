@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Restaurant, SearchHistory, UserRestaurantList
+from .models import Restaurant, SearchHistory, UserRestaurantsList
 
 
 class RestaurantSerializer(serializers.ModelSerializer):
@@ -29,5 +29,5 @@ class UserRestaurantListSerializer(serializers.ModelSerializer):
     restaurant = RestaurantSerializer()
 
     class Meta:
-        model = UserRestaurantList
+        model = UserRestaurantsList
         fields = "__all__"

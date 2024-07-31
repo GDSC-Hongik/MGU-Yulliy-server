@@ -2,7 +2,7 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Restaurant, SearchHistory, UserRestaurantList
+from .models import Restaurant, SearchHistory, UserRestaurantsList
 from .serializers import (
     RestaurantSerializer,
     RestaurantListSerializer,
@@ -48,7 +48,7 @@ def search(request):
 @api_view(["GET"])
 @login_required
 def user_restaurant_list(request):
-    user_restaurants = UserRestaurantList.objects.filter(user=request.user)
+    user_restaurants = UserRestaurantsList.objects.filter(user=request.user)
     serializer = UserRestaurantListSerializer(user_restaurants, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -59,13 +59,13 @@ def add_remove_restaurant(request, pk):
     try:
         restaurant = Restaurant.objects.get(pk=pk)
         if request.method == "POST":
-            UserRestaurantList.objects.create(user=request.user, restaurant=restaurant)
+            UserRestaurantsList.objects.create(user=request.user, restaurant=restaurant)
             return Response(
                 {"message": "Restaurant added successfully"},
                 status=status.HTTP_201_CREATED,
             )
         elif request.method == "DELETE":
-            user_restaurant = UserRestaurantList.objects.get(
+            user_restaurant = UserRestaurantsList.objects.get(
                 user=request.user, restaurant=restaurant
             )
             user_restaurant.delete()
@@ -77,7 +77,7 @@ def add_remove_restaurant(request, pk):
         return Response(
             {"message": "Restaurant not found"}, status=status.HTTP_404_NOT_FOUND
         )
-    except UserRestaurantList.DoesNotExist:
+    except UserRestaurantsList.DoesNotExist:
         return Response(
             {"message": "Restaurant not found in your list"},
             status=status.HTTP_404_NOT_FOUND,
