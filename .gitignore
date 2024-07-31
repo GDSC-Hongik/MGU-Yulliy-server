@@ -7,3 +7,4 @@ db.sqlite3
 .env.prod
 venv/
 mguvenv/
+Python-3.12.0/
