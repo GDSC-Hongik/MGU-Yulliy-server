@@ -1,5 +1,5 @@
 from django.db import models
-from users.models import User
+from accounts.models import User
 from restaurants.models import Restaurant
 
 # Create your models here.
