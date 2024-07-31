@@ -23,13 +23,13 @@ jobs:
         host: ${{ secrets.HOST }}
         username: ubuntu
         key: ${{ secrets.KEY }}
-        script: mkdir -p /home/ubuntu/srv/ubuntu
+        script: mkdir -p /home/ubuntu/MGU-Yulliy-server
 
     - name: copy source via ssh key
       uses: burnett01/rsync-deployments@4.1
       with:
         switches: -avzr --delete
-        remote_path: /home/ubuntu/srv/ubuntu/
+        remote_path: /home/ubuntu/MGU-Yulliy-server
         remote_host: ${{ secrets.HOST }}
         remote_user: ubuntu
         remote_key: ${{ secrets.KEY }}
@@ -41,4 +41,5 @@ jobs:
         username: ubuntu
         key: ${{ secrets.KEY }}
         script: |
-          sh /home/ubuntu/srv/ubuntu/config/scripts/deploy.sh
+          chmod +x /home/ubuntu/MGU-Yulliy-server/config/scripts/deploy.sh
+          /home/ubuntu/MGU-Yulliy-server/config/scripts/deploy.sh
