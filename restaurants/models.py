@@ -36,7 +36,7 @@ class SearchHistory(models.Model):
         ordering = ["-timestamp"]
 
 
-class UserRestaurantList(models.Model):
+class UserRestaurantsList(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
 
