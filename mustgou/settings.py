@@ -124,7 +124,9 @@ REST_FRAMEWORK = {
 CORS_ALLOW_ALL_ORIGINS = True
 
 # HTTP methods 추가
+
 CORS_ALLOW_METHODS = (
+
     "DELETE",
     "GET",
     "OPTIONS",
@@ -144,6 +146,7 @@ CORS_ALLOW_HEADERS = (
     "x-csrftoken",
     "x-requested-with",
 )
+
 
 
 # Internationalization

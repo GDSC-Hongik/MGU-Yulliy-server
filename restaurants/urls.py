@@ -11,5 +11,8 @@ urlpatterns = [
         views.add_remove_restaurant,
         name="add-remove-restaurant",
     ),
+    path(
+        "restaurants/<int:pk>/detail", views.restaurant_detail, name="restaurant-detail"
+    ),
     path("restaurants/", views.user_restaurant_list, name="user-restaurant-list"),
 ]
