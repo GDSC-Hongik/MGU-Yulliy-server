@@ -124,16 +124,16 @@ REST_FRAMEWORK = {
 
 CORS_ALLOWED_ORIGINS = config("CORS_ALLOWED_ORIGINS", default="").split(",")
 
-CORS_ALLOW_METHODS = {
+CORS_ALLOW_METHODS = (
     "DELETE",
     "GET",
     "OPTIONS",
     "PATCH",
     "POST",
     "PUT",
-}
+)
 
-CORS_ALLOW_HEADERS = {
+CORS_ALLOW_HEADERS = (
     "accept",
     "accept-encoding",
     "authorization",
@@ -143,7 +143,7 @@ CORS_ALLOW_HEADERS = {
     "user-agent",
     "x-csrftoken",
     "x-requested-with",
-}
+)
 
 
 # Internationalization
