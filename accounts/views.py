@@ -17,6 +17,15 @@ class LoginView(generics.GenericAPIView):
     def post(self, request):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
-            token = serializer.validated_data
-            return Response({"token": token.key}, status=status.HTTP_200_OK)
+            validated_data = serializer.validated_data
+            return Response(
+                {
+                    "token": validated_data["token"],
+                    "user_id": validated_data["user_id"],
+                    "reliability": validated_data["reliability"],
+                    "profile_img_url": validated_data["profile_img_url"],
+                },
+                status=status.HTTP_200_OK,
+            )
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

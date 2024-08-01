@@ -12,8 +12,8 @@ class User(AbstractUser):
         error_messages={"unique": "이미 사용 중인 닉네임입니다."},
     )
 
-    profile_pic = models.ImageField(
-        default="default_profile_pic.jpg", upload_to="profile_pics"
+    profile_img = models.ImageField(
+        default="default_profile_img.jpg", upload_to="profile_imgs"
     )
 
     reliability = models.SmallIntegerField(default=100)
