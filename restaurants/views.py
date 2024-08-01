@@ -85,7 +85,7 @@ def add_remove_restaurant(request, pk):
 @login_required
 def restaurant_detail(request, pk):
     try:
-        restaurant = Restaurant.objects.get(pk=pk)
+        restaurant = Restaurant.objects.prefetch_related("reviews").get(pk=pk)
         serializer = RestaurantSerializer(restaurant)
         return Response(serializer.data)
     except Restaurant.DoesNotExist:
