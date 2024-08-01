@@ -16,7 +16,7 @@ class User(AbstractUser):
         default="default_profile_pic.jpg", upload_to="profile_pics"
     )
 
-    reliability = models.IntegerField(default=100)
+    reliability = models.SmallIntegerField(default=100)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["name"]
