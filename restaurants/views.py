@@ -79,3 +79,16 @@ def add_remove_restaurant(request, pk):
             {"message": "Restaurant not found in your list"},
             status=status.HTTP_404_NOT_FOUND,
         )
+
+
+@api_view(["GET"])
+@login_required
+def restaurant_detail(request, pk):
+    try:
+        restaurant = Restaurant.objects.get(pk=pk)
+        serializer = RestaurantSerializer(restaurant)
+        return Response(serializer.data)
+    except Restaurant.DoesNotExist:
+        return Response(
+            {"message": "Restaurant not found"}, status=status.HTTP_404_NOT_FOUND
+        )
