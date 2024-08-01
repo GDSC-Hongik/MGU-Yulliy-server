@@ -57,6 +57,12 @@ class LoginSerializer(serializers.Serializer):
         user = authenticate(**data)
         if user:
             token = Token.objects.get(user=user)
-            return token
+            return {
+                "token": token.key,
+                "user_id": user.id,
+                "reliability": user.reliability,
+                "profile_img_url": user.profile_img.url,
+            }
+
         # 가입된 유저가 없을 경우
         raise serializers.ValidationError({"error": "유저 정보가 존재하지 않습니다."})
