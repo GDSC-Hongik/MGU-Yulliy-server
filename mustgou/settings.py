@@ -49,9 +49,10 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.common.CommonMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
-    "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
@@ -120,10 +121,9 @@ REST_FRAMEWORK = {
     ]
 }
 
-# CORS 관련 추가(모든 포트 허용)
-CORS_ALLOW_ALL_ORIGINS = True
 
-# HTTP methods 추가
+CORS_ALLOWED_ORIGINS = config("CORS_ALLOWED_ORIGINS", default="").split(",")
+
 CORS_ALLOW_METHODS = {
     "DELETE",
     "GET",
