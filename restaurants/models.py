@@ -24,7 +24,7 @@ class Restaurant(models.Model):
         valid_ratings = [rating for rating in ratings if rating is not None]
         if valid_ratings:
             return sum(valid_ratings) / len(valid_ratings)
-        return None
+        return 0
 
 
 class SearchHistory(models.Model):

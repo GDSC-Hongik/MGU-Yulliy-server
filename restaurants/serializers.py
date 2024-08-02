@@ -1,23 +1,20 @@
 from rest_framework import serializers
 from .models import Restaurant, SearchHistory, UserRestaurantsList
 
-# from reviews.serializers import ReviewSerializer
+from reviews.serializers import ReviewSerializer
 
 
 class RestaurantSerializer(serializers.ModelSerializer):
-    # reviews = serializers.SerializerMethodField()
+    reviews = serializers.SerializerMethodField()
 
     class Meta:
         model = Restaurant
         fields = "__all__"
 
-
-"""
     def get_reviews(self, obj):
         reviews = obj.reviews.order_by("-recommend_count")[:4]
         serializer = ReviewSerializer(reviews, many=True)
         return serializer.data
-"""
 
 
 class RestaurantListSerializer(serializers.ModelSerializer):
@@ -32,7 +29,7 @@ class RestaurantListSerializer(serializers.ModelSerializer):
         ]
 
     def get_rating_average(self, obj):
-        return obj.rating_average
+        return obj.rating_average()
 
 
 class SearchHistorySerializer(serializers.ModelSerializer):

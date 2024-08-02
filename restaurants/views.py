@@ -12,6 +12,7 @@ from .serializers import (
 
 # from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
+import logging
 from accounts.models import User  # 임시 유저 지정을 위한 임포트, 추후 삭제
 
 
@@ -44,7 +45,9 @@ def search(request):
 
         restaurants = Restaurant.objects.filter(name__icontains=query)
         serializer = RestaurantListSerializer(restaurants, many=True)
-        return Response({"results": serializer.data})
+        data = serializer.data
+        logging.debug("Serialized data: %s", data)
+        return Response({"results": data})
 
     else:
         return Response({"error": "Unsupported method"}, status=405)
