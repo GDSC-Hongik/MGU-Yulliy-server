@@ -33,7 +33,7 @@ class RestaurantListSerializer(serializers.ModelSerializer):
 class SearchHistorySerializer(serializers.ModelSerializer):
     class Meta:
         model = SearchHistory
-        fields = ["query", "timestamp"]
+        fields = ["id", "query", "timestamp"]
 
 
 class UserRestaurantListSerializer(serializers.ModelSerializer):
