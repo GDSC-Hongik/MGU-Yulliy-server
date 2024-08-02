@@ -3,7 +3,7 @@ from . import views
 
 
 urlpatterns = [
-    #    path("restaurants/", views.restaurant_list, name="restaurant-list"),
+    path("restaurants/", views.restaurant_list, name="restaurant-list"),
     path("api-auth/", include("rest_framework.urls", namespace="rest_framework")),
     path("search/", views.search, name="search"),
     path(
@@ -14,5 +14,5 @@ urlpatterns = [
     path(
         "restaurants/<int:pk>/detail", views.restaurant_detail, name="restaurant-detail"
     ),
-    path("restaurants/", views.user_restaurant_list, name="user-restaurant-list"),
+    # 테스트 위해 잠깐 주석처리 path("restaurants/", views.user_restaurant_list, name="user-restaurant-list"),
 ]
