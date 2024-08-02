@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import Friend
-from restaurants.models import Restaurant
+from restaurants.models import Restaurant, UserRestaurantsList
 
 
 class FriendSerializer(serializers.ModelSerializer):
@@ -10,15 +10,16 @@ class FriendSerializer(serializers.ModelSerializer):
 
 
 class RestaurantSerializer(serializers.ModelSerializer):
+    # reviews = serializers.SerializerMethodField()
+
     class Meta:
         model = Restaurant
-        fields = [
-            "id",
-            "name",
-            "google_rating",
-            "naver_rating",
-            "kakao_rating",
-            "address",
-            "latitude",
-            "longitude",
-        ]
+        fields = "__all__"
+
+
+class RestaurantSerializer(serializers.ModelSerializer):
+    restaurant = RestaurantSerializer()
+
+    class Meta:
+        model = UserRestaurantsList
+        fields = "__all__"
