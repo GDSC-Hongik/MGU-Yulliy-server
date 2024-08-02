@@ -13,6 +13,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 
 
+@csrf_exempt
 @api_view(["GET"])
 def restaurant_list(request):
     restaurants = Restaurant.objects.all()
@@ -44,6 +45,7 @@ def search(request):
         return Response({"error": "Unsupported method"}, status=405)
 
 
+@csrf_exempt
 @api_view(["GET"])
 @login_required
 def user_restaurant_list(request):
@@ -52,6 +54,7 @@ def user_restaurant_list(request):
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+@csrf_exempt
 @api_view(["POST", "DELETE"])
 @login_required
 def add_remove_restaurant(request, pk):
@@ -83,6 +86,7 @@ def add_remove_restaurant(request, pk):
         )
 
 
+@csrf_exempt
 @api_view(["GET"])
 @login_required
 def restaurant_detail(request, pk):
