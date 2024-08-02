@@ -7,7 +7,9 @@ from restaurants.models import Restaurant
 
 class Review(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
+    restaurant = models.ForeignKey(
+        Restaurant, on_delete=models.CASCADE, related_name="reviews"
+    )
     content = models.CharField(max_length=255)
     recommend_count = models.IntegerField()
     decommend_count = models.IntegerField()
