@@ -10,13 +10,20 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ["name", "profile_img", "reliability"]
 
 
-class FriendSerializer(serializers.ModelSerializer):
+class FriendRequestSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
+
+    class Meta:
+        model = Friend
+        fields = ["user", "state"]
+
+
+class FriendSerializer(serializers.ModelSerializer):
     friend = UserSerializer(read_only=True)
 
     class Meta:
         model = Friend
-        fields = ["user", "friend", "state"]
+        fields = ["friend", "state"]
 
 
 class RestaurantSerializer(serializers.ModelSerializer):

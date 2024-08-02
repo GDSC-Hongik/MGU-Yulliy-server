@@ -5,7 +5,7 @@ from rest_framework import status
 
 # from django.contrib.auth.decorators import login_required
 from restaurants.models import UserRestaurantsList
-from .serializers import RestaurantSerializer, FriendSerializer
+from .serializers import RestaurantSerializer, FriendSerializer, FriendRequestSerializer
 from accounts.models import User
 from .models import Friend
 from django.views.decorators.csrf import csrf_exempt
@@ -36,14 +36,14 @@ def friend_list(request):
     user = User.objects.get(id=21)
 
     friend_request = Friend.objects.filter(friend=user, state="request")
-    friend_request_serialized = FriendSerializer(friend_request, many=True).data
+    friend_request_serialized = FriendRequestSerializer(friend_request, many=True).data
 
-    friend_approve = Friend.objects.filter(user=user, state="approve")
-    friend_approve_serialized = FriendSerializer(friend_approve, many=True).data
+    friends = Friend.objects.filter(user=user, state="approve")
+    friends_serialized = FriendSerializer(friends, many=True).data
 
     data = {
         "friend_request": friend_request_serialized,
-        "friends": friend_approve_serialized,
+        "friends": friends_serialized,
     }
 
     return Response(data)
