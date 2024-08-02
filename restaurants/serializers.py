@@ -28,6 +28,8 @@ class RestaurantListSerializer(serializers.ModelSerializer):
             "naver_rating",
             "kakao_rating",
             "address",
+            "longitude",
+            "longitude",
         ]
 
     def get_rating_average(self, obj):
