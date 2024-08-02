@@ -2,14 +2,15 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from django.contrib.auth.decorators import login_required
+
+# from django.contrib.auth.decorators import login_required
 from restaurants.models import UserRestaurantsList
 from .serializers import RestaurantSerializer
 from accounts.models import User
 
 
 @api_view(["GET"])
-@login_required
+# @login_required
 def friend_restaurant_list(request, id):
     try:
         # id에 해당하는 친구를 가져옴
