@@ -7,15 +7,36 @@ from accounts.models import User
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["name", "profile_img", "reliability"]
+        fields = ["id", "name", "profile_img", "reliability"]
 
 
 class FriendRequestSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
+    common_restaurant_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Friend
-        fields = ["user", "state"]
+        fields = ["user", "state", "common_restaurant_count"]
+
+    def get_common_restaurant_count(self, obj):
+        try:
+            user = obj.user
+            # friend_user = self.context.get('request').user
+            friend_user = User.objects.get(id=21)
+
+            user_restaurants = set(
+                UserRestaurantsList.objects.filter(user=user).values_list(
+                    "restaurant_id", flat=True
+                )
+            )
+            friend_restaurants = set(
+                UserRestaurantsList.objects.filter(user=friend_user).values_list(
+                    "restaurant_id", flat=True
+                )
+            )
+            return len(user_restaurants.intersection(friend_restaurants))
+        except User.DoesNotExist:
+            return 0
 
 
 class FriendSerializer(serializers.ModelSerializer):
