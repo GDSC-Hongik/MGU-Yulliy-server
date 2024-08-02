@@ -10,6 +10,7 @@ from .serializers import (
     UserRestaurantListSerializer,
 )
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
 
 
 @api_view(["GET"])
@@ -19,6 +20,7 @@ def restaurant_list(request):
     return Response(serializer.data)
 
 
+@csrf_exempt
 @api_view(["GET", "POST"])
 @login_required
 def search(request):
