@@ -19,4 +19,6 @@ class RestaurantSerializer(serializers.ModelSerializer):
             "naver_rating",
             "kakao_rating",
             "address",
+            "latitude",
+            "longitude",
         ]
