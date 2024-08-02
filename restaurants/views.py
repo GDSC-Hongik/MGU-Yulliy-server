@@ -26,7 +26,7 @@ def restaurant_list(request):
 
 
 @csrf_exempt
-@api_view(["GET", "POST"])
+@api_view(["GET", "POST", "DELETE"])
 # @login_required
 def search(request):
     user = User.objects.get(id=21)  # 임시 유저 지정, 추후 삭제
@@ -49,6 +49,18 @@ def search(request):
         data = serializer.data
         logging.debug("Serialized data: %s", data)
         return Response({"results": data})
+
+    elif request.method == "DELETE":
+        history_id = request.data.get("id", "")
+        if not history_id:
+            return Response({"error": "No history ID provided"}, status=400)
+
+        try:
+            history_to_delete = SearchHistory.objects.get(id=history_id, user=user)
+            history_to_delete.delete()
+            return Response({"message": "Search history deleted successfully"})
+        except SearchHistory.DoesNotExist:
+            return Response({"error": "No matching search history found"}, status=404)
 
     else:
         return Response({"error": "Unsupported method"}, status=405)
