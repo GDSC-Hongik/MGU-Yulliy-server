@@ -9,8 +9,10 @@ from .serializers import (
     SearchHistorySerializer,
     UserRestaurantListSerializer,
 )
-from django.contrib.auth.decorators import login_required
+
+# from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
+from accounts.models import User  # 임시 유저 지정을 위한 임포트, 추후 삭제
 
 
 @csrf_exempt
@@ -23,10 +25,12 @@ def restaurant_list(request):
 
 @csrf_exempt
 @api_view(["GET", "POST"])
-@login_required
+# @login_required
 def search(request):
+    user = User.objects.get(id=21)  # 임시 유저 지정, 추후 삭제
     if request.method == "GET":
-        histories = SearchHistory.objects.filter(user=request.user)
+        histories = SearchHistory.objects.filter(user=user)  # 추후 삭제
+        # histories = SearchHistory.objects.filter(user=request.user)
         serializer = SearchHistorySerializer(histories, many=True)
         return Response({"histories": serializer.data})
 
@@ -35,7 +39,8 @@ def search(request):
         if not query:
             return Response({"error": "No search query provided"}, status=400)
 
-        SearchHistory.objects.create(user=request.user, query=query)
+        SearchHistory.objects.create(user=user, query=query)  # 추후 삭제
+        # SearchHistory.objects.create(user=request.user, query=query)
 
         restaurants = Restaurant.objects.filter(name__icontains=query)
         serializer = RestaurantListSerializer(restaurants, many=True)
@@ -47,28 +52,36 @@ def search(request):
 
 @csrf_exempt
 @api_view(["GET"])
-@login_required
+# @login_required
 def user_restaurant_list(request):
-    user_restaurants = UserRestaurantsList.objects.filter(user=request.user)
+    user = User.objects.get(id=21)  # 임시 유저 지정, 추후 삭제
+    user_restaurants = UserRestaurantsList.objects.filter(user=user)  # 추후 삭제
+    # user_restaurants = UserRestaurantsList.objects.filter(user=request.user)
     serializer = UserRestaurantListSerializer(user_restaurants, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 @csrf_exempt
 @api_view(["POST", "DELETE"])
-@login_required
+# @login_required
 def add_remove_restaurant(request, pk):
+    user = User.objects.get(id=21)  # 임시 유저 지정, 추후 삭제
     try:
         restaurant = Restaurant.objects.get(pk=pk)
         if request.method == "POST":
-            UserRestaurantsList.objects.create(user=request.user, restaurant=restaurant)
+            UserRestaurantsList.objects.create(
+                user=user, restaurant=restaurant
+            )  # 추후 삭제
+            # UserRestaurantsList.objects.create(user=request.user, restaurant=restaurant)
             return Response(
                 {"message": "Restaurant added successfully"},
                 status=status.HTTP_201_CREATED,
             )
         elif request.method == "DELETE":
             user_restaurant = UserRestaurantsList.objects.get(
-                user=request.user, restaurant=restaurant
+                # user=request.user, restaurant=restaurant
+                user=user,
+                restaurant=restaurant,  # 추후 삭제
             )
             user_restaurant.delete()
             return Response(
@@ -88,7 +101,7 @@ def add_remove_restaurant(request, pk):
 
 @csrf_exempt
 @api_view(["GET"])
-@login_required
+# @login_required
 def restaurant_detail(request, pk):
     try:
         restaurant = Restaurant.objects.prefetch_related("reviews").get(pk=pk)
