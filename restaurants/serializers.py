@@ -21,7 +21,9 @@ class RestaurantListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Restaurant
         fields = [
+            "id",
             "name",
+            "food_type",
             "rating_average",
             "address",
         ]
