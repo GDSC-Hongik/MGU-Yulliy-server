@@ -1,6 +1,7 @@
 # selenium의 webdriver를 사용하기 위한 import
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 
 import pandas as pd
 
@@ -11,7 +12,7 @@ import time
 driver = webdriver.Chrome()
 
 # 크롬 드라이버에 url 주소 넣고 실행
-driver.get("http://www.moamodu.com/develop/daum_map.php")
+driver.get("https://map.kakao.com/")
 
 # 페이지가 완전히 로딩되도록 4초 동안 기다림
 time.sleep(4)
@@ -58,24 +59,42 @@ def get_lag_lng(address):
     return lagtitude, longitude
 
 
+def get_type(restaurant_name):
+    search_box = driver.find_element(By.ID, "search.keyword.query")
+    search_box.send_keys(restaurant_name)
+    search_box.send_keys(Keys.RETURN)
+    time.sleep(3)
+
+    try:
+        rtype = driver.find_element(By.CLASS_NAME, "subcategory")
+        type = rtype.text
+    except Exception:
+        type = "null"
+
+    time.sleep(1)
+
+    # 검색어 창 비우기
+    search_box.clear()
+
+    return type
+
+
 # Load the CSV file
-file_path = "kakao_test.csv"
+file_path = "final.csv"
 data = pd.read_csv(file_path)
 
 # 칼럼 추가
-data["Latitude"] = None
-data["Longitude"] = None
+data["Type"] = None
 
-# 식당 주소로 위도 경도 획득 후 입력
+# 식당으로 타입 획득 후 입력
 for index, row in data.iterrows():
-    restaurant_address = row["Address"]
-    lagtitude, longitude = get_lag_lng(restaurant_address)
-    data.at[index, "Latitude"] = lagtitude
-    data.at[index, "Longitude"] = longitude
+    restaurant_address = row["Name"]
+    type = get_type(restaurant_address)
+    data.at[index, "Type"] = type
     time.sleep(1)
 
 # 데이터 저장
-data.to_csv("kakao_latlng_add.csv", encoding="utf-8-sig", index=False)
+data.to_csv("restauranttype.csv", encoding="utf-8-sig", index=False)
 
 # 브라우저 닫기
 driver.quit()
