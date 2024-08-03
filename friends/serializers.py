@@ -47,6 +47,17 @@ class FriendSerializer(serializers.ModelSerializer):
         fields = ["friend", "state"]
 
 
+class RestaurantlistSerializer(serializers.ModelSerializer):
+    rating_average = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Restaurant
+        fields = ["name", "rating_average", "latitude", "longitude"]
+
+    def get_rating_average(self, obj):
+        return obj.rating_average()
+
+
 class RestaurantSerializer(serializers.ModelSerializer):
     # reviews = serializers.SerializerMethodField()
 
@@ -55,8 +66,8 @@ class RestaurantSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class RestaurantSerializer(serializers.ModelSerializer):
-    restaurant = RestaurantSerializer()
+class FriendRestaurantSerializer(serializers.ModelSerializer):
+    restaurant = RestaurantlistSerializer()
 
     class Meta:
         model = UserRestaurantsList

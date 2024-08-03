@@ -36,8 +36,19 @@ class SearchHistorySerializer(serializers.ModelSerializer):
         fields = ["id", "query", "timestamp"]
 
 
+class RestaurantlistSerializer(serializers.ModelSerializer):
+    rating_average = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Restaurant
+        fields = ["name", "rating_average", "latitude", "longitude"]
+
+    def get_rating_average(self, obj):
+        return obj.rating_average()
+
+
 class UserRestaurantListSerializer(serializers.ModelSerializer):
-    restaurant = RestaurantSerializer()
+    restaurant = RestaurantlistSerializer()
 
     class Meta:
         model = UserRestaurantsList
