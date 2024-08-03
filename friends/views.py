@@ -5,7 +5,11 @@ from rest_framework import status
 
 # from django.contrib.auth.decorators import login_required
 from restaurants.models import UserRestaurantsList
-from .serializers import RestaurantSerializer, FriendSerializer, FriendRequestSerializer
+from .serializers import (
+    FriendSerializer,
+    FriendRequestSerializer,
+    FriendRestaurantSerializer,
+)
 from accounts.models import User
 from .models import Friend
 from django.views.decorators.csrf import csrf_exempt
@@ -20,7 +24,7 @@ def friend_restaurant_list(request, id):
 
         # 친구의 맛집 리스트를 가져옴
         friend_restaurants = UserRestaurantsList.objects.filter(user=friend)
-        serializer = RestaurantSerializer(friend_restaurants, many=True)
+        serializer = FriendRestaurantSerializer(friend_restaurants, many=True)
 
         return Response({"restaurants": serializer.data}, status=status.HTTP_200_OK)
     except User.DoesNotExist:
