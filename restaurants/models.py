@@ -6,6 +6,7 @@ from accounts.models import User
 
 class Restaurant(models.Model):
     name = models.CharField(max_length=255)
+    food_type = models.CharField(max_length=20, null=True, blank=True)
     rating_naver = models.DecimalField(
         max_digits=5, decimal_places=2, null=True, blank=True
     )
@@ -24,7 +25,7 @@ class Restaurant(models.Model):
         valid_ratings = [rating for rating in ratings if rating is not None]
         if valid_ratings:
             return sum(valid_ratings) / len(valid_ratings)
-        return None
+        return 0
 
 
 class SearchHistory(models.Model):
