@@ -22,9 +22,6 @@ from django.db.models import Count, Q
 import random
 from .serializers import RestaurantSerializer
 
-# from .serializers import FriendSerializer, FriendRequestSerializer
-from accounts.models import User
-
 from django.shortcuts import get_object_or_404
 
 
@@ -138,6 +135,8 @@ def friend_recommend(request):
 
     except User.DoesNotExist:
         return Response({"message": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+
+
 # 친구신청
 class FriendRequestView(APIView):
     # authentication_classes = [TokenAuthentication]
