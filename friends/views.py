@@ -4,10 +4,6 @@ from rest_framework.views import APIView
 
 # from rest_framework.authentication import TokenAuthentication
 # from rest_framework.permissions import IsAuthenticated
-from rest_framework.views import APIView
-
-# from rest_framework.authentication import TokenAuthentication
-# from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 
@@ -18,13 +14,13 @@ from .serializers import (
     FriendRequestSerializer,
     RestaurantlistSerializer,
     FriendRecommendSerializer,
-    # RestaurantSerializer,
 )
 
 # from .serializers import FriendSerializer, FriendRequestSerializer
 from accounts.models import User
 from .models import Friend, FriendRequest
-from django.views.decorators.csrf import csrf_exempt
+
+# from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Count, Q
 import random
 
@@ -52,9 +48,9 @@ def friend_restaurant_list(request, id):
         )
 
 
-@csrf_exempt
 @api_view(["GET"])
-# @login_required
+# @authentication_classes([TokenAuthentication])
+# @permission_classes([IsAuthenticated])
 def friend_list(request):
     try:
         # user = request.user
@@ -102,9 +98,9 @@ def friend_list(request):
         return Response({"message": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
 
-@csrf_exempt
 @api_view(["GET"])
-# @login_required
+# @authentication_classes([TokenAuthentication])
+# @permission_classes([IsAuthenticated])
 def friend_recommend(request):
     try:
         # user = request.user
