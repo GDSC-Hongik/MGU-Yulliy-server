@@ -19,6 +19,7 @@ class Restaurant(models.Model):
     address = models.CharField(max_length=255)
     latitude = models.DecimalField(max_digits=11, decimal_places=8)
     longitude = models.DecimalField(max_digits=11, decimal_places=8)
+    image_url = models.URLField(max_length=500, null=True, blank=True)
 
     def rating_average(self):
         ratings = [self.rating_naver, self.rating_kakao, self.rating_google]
