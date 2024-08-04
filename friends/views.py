@@ -14,6 +14,7 @@ from .serializers import (
     FriendRequestSerializer,
     RestaurantlistSerializer,
     FriendRecommendSerializer,
+    RestaurantSerializer,
 )
 
 # from .serializers import FriendSerializer, FriendRequestSerializer
