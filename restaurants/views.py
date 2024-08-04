@@ -7,7 +7,7 @@ from .serializers import (
     RestaurantSerializer,
     RestaurantListSerializer,
     SearchHistorySerializer,
-    UserRestaurantListSerializer,
+    RestaurantlistSerializer,
     RestaurantDetailSerializer,
 )
 
@@ -70,11 +70,18 @@ def search(request):
 @api_view(["GET"])
 # @login_required
 def user_restaurant_list(request):
-    user = User.objects.get(id=21)  # 임시 유저 지정, 추후 삭제
-    user_restaurants = UserRestaurantsList.objects.filter(user=user)  # 추후 삭제
-    # user_restaurants = UserRestaurantsList.objects.filter(user=request.user)
-    serializer = UserRestaurantListSerializer(user_restaurants, many=True)
-    return Response(serializer.data, status=status.HTTP_200_OK)
+    try:
+        user = User.objects.get(id=21)  # 임시 유저 지정, 추후 삭제
+        user_restaurants = UserRestaurantsList.objects.filter(user=user)  # 추후 삭제
+        # user_restaurants = UserRestaurantsList.objects.filter(user=request.user)
+        restaurant_ids = user_restaurants.values_list("restaurant_id", flat=True)
+        restaurants = Restaurant.objects.filter(id__in=restaurant_ids)
+        serializer = RestaurantlistSerializer(restaurants, many=True)
+        return Response({"results": serializer.data}, status=status.HTTP_200_OK)
+    except User.DoesNotExist:
+        return Response(
+            {"message": "Default user not found"}, status=status.HTTP_404_NOT_FOUND
+        )
 
 
 @csrf_exempt
