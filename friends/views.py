@@ -12,7 +12,7 @@ from .serializers import (
     FriendRecommendSerializer,
 )
 from accounts.models import User
-from .models import Friend
+from .models import Friend, FriendRequest
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Count, Q
 import random
@@ -44,14 +44,15 @@ def friend_restaurant_list(request, id):
 # @login_required
 def friend_list(request):
     try:
+        # user = request.user
         user = User.objects.get(id=21)
 
-        friend_request = Friend.objects.filter(friend=user, state="request")
+        friend_request = FriendRequest.objects.filter(to_user=user, state="pending")
         friend_request_serialized = FriendRequestSerializer(
             friend_request, context={"request": request}, many=True
         ).data
 
-        friends = Friend.objects.filter(user=user, state="approve")
+        friends = Friend.objects.filter(user=user)
         friends_serialized = FriendSerializer(friends, many=True).data
 
         user_restaurants = set(
@@ -71,7 +72,9 @@ def friend_list(request):
         )
 
         friend_recommend_serialized = FriendRecommendSerializer(
-            potential_friends, many=True, context={"request": request, "user": user}
+            potential_friends,
+            many=True,
+            context={"request": request, "user": user, "include_restaurants": False},
         ).data
 
         data = {
@@ -91,6 +94,7 @@ def friend_list(request):
 # @login_required
 def friend_recommend(request):
     try:
+        # user = request.user
         user = User.objects.get(id=21)
 
         user_restaurants = set(
@@ -112,7 +116,8 @@ def friend_recommend(request):
         if potential_friends:
             random_friend = random.choice(potential_friends)
             friend_recommend_serialized = FriendRecommendSerializer(
-                random_friend, context={"request": request, "user": user}
+                random_friend,
+                context={"request": request, "user": user, "include_restaurants": True},
             ).data
             return Response(friend_recommend_serialized)
 
