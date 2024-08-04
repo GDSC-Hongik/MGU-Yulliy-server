@@ -52,7 +52,16 @@ class RestaurantlistSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Restaurant
-        fields = ["id", "name", "food_type", "rating_average", "latitude", "longitude"]
+        fields = [
+            "id",
+            "name",
+            "food_type",
+            "rating_average",
+            "address",
+            "latitude",
+            "longitude",
+            "image_url",
+        ]
 
     def get_rating_average(self, obj):
         return obj.rating_average()
