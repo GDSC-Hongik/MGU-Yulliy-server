@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Friend
+from .models import Friend, FriendRequest
 from restaurants.models import Restaurant, UserRestaurantsList
 from accounts.models import User
 
@@ -11,16 +11,25 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class FriendRequestSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only=True)
+    id = serializers.IntegerField(source="from_user.id")
+    name = serializers.CharField(source="from_user.name")
+    profile_img = serializers.URLField(source="from_user.profile_img.url")
+    reliability = serializers.IntegerField(source="from_user.reliability")
     common_restaurant_count = serializers.SerializerMethodField()
 
     class Meta:
-        model = Friend
-        fields = ["user", "state", "common_restaurant_count"]
+        model = FriendRequest
+        fields = [
+            "id",
+            "name",
+            "profile_img",
+            "reliability",
+            "common_restaurant_count",
+        ]
 
     def get_common_restaurant_count(self, obj):
         try:
-            user = obj.user
+            user = obj.from_user
             # friend_user = self.context.get('request').user
             friend_user = User.objects.get(id=21)
 
@@ -80,13 +89,28 @@ class FriendRecommendSerializer(serializers.ModelSerializer):
         ).values("restaurant__name", "restaurant__image_url")[:2]
         return friend_restaurants
 
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        include_restaurants = self.context.get("include_restaurants", False)
+        if not include_restaurants:
+            representation.pop("common_restaurants")
+        return representation
+
 
 class FriendSerializer(serializers.ModelSerializer):
-    friend = UserSerializer(read_only=True)
+    id = serializers.IntegerField(source="friend.id")
+    name = serializers.CharField(source="friend.name")
+    profile_img = serializers.URLField(source="friend.profile_img.url")
+    reliability = serializers.IntegerField(source="friend.reliability")
 
     class Meta:
         model = Friend
-        fields = ["friend", "state"]
+        fields = [
+            "id",
+            "name",
+            "profile_img",
+            "reliability",
+        ]
 
 
 class RestaurantlistSerializer(serializers.ModelSerializer):
