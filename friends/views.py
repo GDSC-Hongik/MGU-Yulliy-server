@@ -114,7 +114,7 @@ def friend_recommend(request):
             friend_recommend_serialized = FriendRecommendSerializer(
                 random_friend, context={"request": request, "user": user}
             ).data
-            return Response({"friend_recommend": friend_recommend_serialized})
+            return Response(friend_recommend_serialized)
 
         return Response(
             {"message": "No recommended friends found"},
