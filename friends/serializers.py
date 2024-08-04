@@ -57,7 +57,6 @@ class RestaurantlistSerializer(serializers.ModelSerializer):
             "name",
             "food_type",
             "rating_average",
-            "address",
             "latitude",
             "longitude",
             "image_url",
