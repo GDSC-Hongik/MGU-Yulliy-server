@@ -12,6 +12,3 @@ class FriendRequestAdmin(admin.ModelAdmin):
 
 admin.site.register(Friend, FriendAdmin)
 admin.site.register(FriendRequest, FriendRequestAdmin)
-from .models import Friend
-
-admin.site.register(Friend)
