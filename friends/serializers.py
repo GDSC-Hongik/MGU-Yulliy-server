@@ -132,6 +132,12 @@ class RestaurantlistSerializer(serializers.ModelSerializer):
         return obj.rating_average()
 
 
+class FriendRequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Friend
+        fields = "__all__"
+
+
 class RestaurantSerializer(serializers.ModelSerializer):
     # reviews = serializers.SerializerMethodField()
 
