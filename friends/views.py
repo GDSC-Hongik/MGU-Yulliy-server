@@ -1,5 +1,9 @@
 # from django.shortcuts import render
 from rest_framework.decorators import api_view
+from rest_framework.views import APIView
+
+# from rest_framework.authentication import TokenAuthentication
+# from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 
@@ -16,6 +20,12 @@ from .models import Friend, FriendRequest
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Count, Q
 import random
+from .serializers import RestaurantSerializer
+
+# from .serializers import FriendSerializer, FriendRequestSerializer
+from accounts.models import User
+
+from django.shortcuts import get_object_or_404
 
 
 @api_view(["GET"])
@@ -128,3 +138,81 @@ def friend_recommend(request):
 
     except User.DoesNotExist:
         return Response({"message": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+# 친구신청
+class FriendRequestView(APIView):
+    # authentication_classes = [TokenAuthentication]
+    # permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        action = request.data.get("action")
+        friend_id = request.data.get("friend_id")
+
+        if action == "send":
+            return self.send_request(request, friend_id)
+        elif action == "accept":
+            return self.accept_request(request, friend_id)
+        elif action == "decline":
+            return self.decline_request(request, friend_id)
+        else:
+            return Response(
+                {"message": "올바르지 않은 요청입니다."}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+    # 친구 요청
+    def send_request(self, request, friend_id):
+        to_user = get_object_or_404(User, id=friend_id)
+        from_user = request.user
+
+        if FriendRequest.objects.filter(from_user=from_user, to_user=to_user).exists():
+            return Response(
+                {"message": "이미 친구 요청을 보냈습니다."}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        friend_request = FriendRequest(
+            from_user=from_user, to_user=to_user, state="pending"
+        )
+        friend_request.save()
+
+        return Response({"message": "친구 요청을 보냈습니다."}, status=status.HTTP_201_CREATED)
+
+    # 친구 수락
+    def accept_request(self, request, friend_id):
+        # 친구 요청을 보낸 사용자의 id와 일치하는 요청이 있는지 확인
+        friend_request = get_object_or_404(FriendRequest, from_user__id=friend_id)
+
+        if friend_request.to_user != request.user:
+            return Response({"message": "권한이 없습니다."}, status=status.HTTP_403_FORBIDDEN)
+        if friend_request.state != "pending":
+            return Response(
+                {"message": "이미 처리된 요청입니다."}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        friend_request.state = "accepted"
+        friend_request.save()
+
+        # 양방향 친구 관계 설정
+        from_user = friend_request.from_user
+        to_user = friend_request.to_user
+
+        friend_relation = Friend.objects.create(user=from_user, friend=to_user)
+        friend_relation.save()
+        reverse_friend_relation = Friend.objects.create(user=to_user, friend=from_user)
+        reverse_friend_relation.save()
+
+        return Response({"message": "친구 신청을 수락했습니다."}, status=status.HTTP_200_OK)
+
+    # 친구 거절
+    def decline_request(self, request, friend_id):
+        friend_request = get_object_or_404(FriendRequest, from_user__id=friend_id)
+
+        if friend_request.to_user != request.user:
+            return Response({"message": "권한이 없습니다."}, status=status.HTTP_403_FORBIDDEN)
+        if friend_request.state != "pending":
+            return Response(
+                {"message": "이미 처리된 요청입니다."}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        friend_request.state = "declined"
+        friend_request.save()
+
+        return Response({"message": "친구 신청을 거절했습니다."}, status=status.HTTP_200_OK)
