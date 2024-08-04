@@ -4,11 +4,11 @@ from rest_framework.response import Response
 from rest_framework import status
 
 # from django.contrib.auth.decorators import login_required
-from restaurants.models import UserRestaurantsList
+from restaurants.models import UserRestaurantsList, Restaurant
 from .serializers import (
     FriendSerializer,
     FriendRequestSerializer,
-    FriendRestaurantSerializer,
+    RestaurantlistSerializer,
 )
 from accounts.models import User
 from .models import Friend
@@ -24,9 +24,12 @@ def friend_restaurant_list(request, id):
 
         # 친구의 맛집 리스트를 가져옴
         friend_restaurants = UserRestaurantsList.objects.filter(user=friend)
-        serializer = FriendRestaurantSerializer(friend_restaurants, many=True)
+        restaurant_ids = friend_restaurants.values_list("restaurant_id", flat=True)
+        restaurants = Restaurant.objects.filter(id__in=restaurant_ids)
 
-        return Response({"restaurants": serializer.data}, status=status.HTTP_200_OK)
+        serializer = RestaurantlistSerializer(restaurants, many=True)
+
+        return Response({"results": serializer.data}, status=status.HTTP_200_OK)
     except User.DoesNotExist:
         return Response(
             {"message": "Friend not found"}, status=status.HTTP_404_NOT_FOUND
