@@ -15,6 +15,3 @@ class CustomUserAdmin(UserAdmin):
     )
 
 admin.site.register(User, CustomUserAdmin)
-from .models import User
-
-admin.site.register(User)
