@@ -39,6 +39,48 @@ class FriendRequestSerializer(serializers.ModelSerializer):
             return 0
 
 
+class FriendRecommendSerializer(serializers.ModelSerializer):
+    common_restaurant_count = serializers.SerializerMethodField()
+    common_restaurants = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = [
+            "id",
+            "name",
+            "profile_img",
+            "reliability",
+            "common_restaurant_count",
+            "common_restaurants",
+        ]
+
+    def get_common_restaurant_count(self, obj):
+        user = self.context.get("user")
+        user_restaurants = set(
+            UserRestaurantsList.objects.filter(user=user).values_list(
+                "restaurant_id", flat=True
+            )
+        )
+        friend_restaurants = set(
+            UserRestaurantsList.objects.filter(user=obj).values_list(
+                "restaurant_id", flat=True
+            )
+        )
+        return len(user_restaurants.intersection(friend_restaurants))
+
+    def get_common_restaurants(self, obj):
+        user = self.context.get("user")
+        user_restaurants = set(
+            UserRestaurantsList.objects.filter(user=user).values_list(
+                "restaurant_id", flat=True
+            )
+        )
+        friend_restaurants = UserRestaurantsList.objects.filter(
+            user=obj, restaurant_id__in=user_restaurants
+        ).values("restaurant__name", "restaurant__image_url")[:2]
+        return friend_restaurants
+
+
 class FriendSerializer(serializers.ModelSerializer):
     friend = UserSerializer(read_only=True)
 
