@@ -14,13 +14,15 @@ from .serializers import (
     FriendRequestSerializer,
     RestaurantlistSerializer,
     FriendRecommendSerializer,
+    RestaurantSerializer,
 )
+
+# from .serializers import FriendSerializer, FriendRequestSerializer
 from accounts.models import User
 from .models import Friend, FriendRequest
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Count, Q
 import random
-from .serializers import RestaurantSerializer
 
 from django.shortcuts import get_object_or_404
 
