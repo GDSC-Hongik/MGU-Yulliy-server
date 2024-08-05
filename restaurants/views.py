@@ -39,7 +39,10 @@ def search(request):
     elif request.method == "POST":
         query = request.data.get("query", "")
         if not query:
-            return Response({"error": "No search query provided"}, status=400)
+            return Response(
+                {"error": "No search query provided"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         SearchHistory.objects.create(user=user, query=query)  # 추후 삭제
         # SearchHistory.objects.create(user=request.user, query=query)
@@ -53,17 +56,24 @@ def search(request):
     elif request.method == "DELETE":
         history_id = request.data.get("id", "")
         if not history_id:
-            return Response({"error": "No history ID provided"}, status=400)
+            return Response(
+                {"error": "No history ID provided"}, status=status.HTTP_400_BAD_REQUEST
+            )
 
         try:
             history_to_delete = SearchHistory.objects.get(id=history_id, user=user)
             history_to_delete.delete()
             return Response({"message": "Search history deleted successfully"})
         except SearchHistory.DoesNotExist:
-            return Response({"error": "No matching search history found"}, status=404)
+            return Response(
+                {"error": "No matching search history found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
 
     else:
-        return Response({"error": "Unsupported method"}, status=405)
+        return Response(
+            {"error": "Unsupported method"}, status=status.HTTP_405_METHOD_NOT_ALLOWED
+        )
 
 
 @csrf_exempt
