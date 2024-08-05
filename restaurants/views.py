@@ -11,6 +11,8 @@ from .serializers import (
     RestaurantDetailSerializer,
 )
 
+# from rest_framework.authentication import TokenAuthentication
+# from rest_framework.permissions import IsAuthenticated
 # from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 import logging
@@ -26,9 +28,9 @@ def restaurant_list(request):
     return Response(serializer.data)
 
 
-@csrf_exempt
 @api_view(["GET", "POST", "DELETE"])
-# @login_required
+# @authentication_classes([TokenAuthentication])
+# @permission_classes([IsAuthenticated])
 def search(request):
     user = User.objects.get(id=21)  # 임시 유저 지정, 추후 삭제
     if request.method == "GET":
@@ -138,9 +140,9 @@ def add_remove_restaurant(request, pk):
         )
 
 
-@csrf_exempt
 @api_view(["GET"])
-# @login_required
+# @authentication_classes([TokenAuthentication])
+# @permission_classes([IsAuthenticated])
 def restaurant_detail(request, pk):
     try:
         restaurant = Restaurant.objects.prefetch_related("reviews").get(pk=pk)
