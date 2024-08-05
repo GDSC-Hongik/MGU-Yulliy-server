@@ -177,3 +177,5 @@ AUTH_USER_MODEL = "accounts.User"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 LOGIN_URL = "/auth/login/"
+
+APPEND_SLASH = True
