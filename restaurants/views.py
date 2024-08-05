@@ -53,7 +53,7 @@ def search(request):
         query_terms = query.split()
         q_objects = Q()
         for term in query_terms:
-            q_objects |= Q(name__icontains=term) | Q(food_type__icontains=term)
+            q_objects &= Q(name__icontains=term) | Q(food_type__icontains=term)
 
         restaurants = Restaurant.objects.filter(q_objects).distinct()
         serializer = RestaurantListSerializer(restaurants, many=True)
