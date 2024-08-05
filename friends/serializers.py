@@ -132,7 +132,7 @@ class RestaurantlistSerializer(serializers.ModelSerializer):
         return obj.rating_average()
 
 
-class FriendRequestViewSerializer(serializers.ModelSerializer):
+class FriendRequestViewSerializer(serializers.Serializer):
     action = serializers.ChoiceField(choices=["send", "accept", "decline"])
     friend_id = serializers.IntegerField()
 
