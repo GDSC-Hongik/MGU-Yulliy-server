@@ -115,11 +115,11 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.TokenAuthentication",
-    ]
-}
+# REST_FRAMEWORK = {
+#    "DEFAULT_AUTHENTICATION_CLASSES": [
+#        "rest_framework.authentication.TokenAuthentication",
+#    ]
+# }
 
 
 CORS_ALLOWED_ORIGINS = config("CORS_ALLOWED_ORIGINS", default="").split(",")
