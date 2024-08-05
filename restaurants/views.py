@@ -15,6 +15,7 @@ from .serializers import (
 from django.views.decorators.csrf import csrf_exempt
 import logging
 from accounts.models import User  # 임시 유저 지정을 위한 임포트, 추후 삭제
+from django.db.models import Q
 
 
 @csrf_exempt
@@ -47,7 +48,12 @@ def search(request):
         SearchHistory.objects.create(user=user, query=query)  # 추후 삭제
         # SearchHistory.objects.create(user=request.user, query=query)
 
-        restaurants = Restaurant.objects.filter(name__icontains=query)
+        query_terms = query.split()
+        q_objects = Q()
+        for term in query_terms:
+            q_objects |= Q(name__icontains=term) | Q(food_type__icontains=term)
+
+        restaurants = Restaurant.objects.filter(q_objects).distinct()
         serializer = RestaurantListSerializer(restaurants, many=True)
         data = serializer.data
         logging.debug("Serialized data: %s", data)
