@@ -22,4 +22,5 @@ urlpatterns = [
     path("", include("restaurants.urls")),
     path("auth/", include("accounts.urls")),
     path("", include("friends.urls")),
+    path("", include("reviews.urls")),
 ]
