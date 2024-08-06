@@ -1,5 +1,6 @@
 from django.urls import path, include, re_path
 from . import views
+from reviews.views import review_write
 
 
 urlpatterns = [
@@ -13,7 +14,10 @@ urlpatterns = [
         name="add-remove-restaurant",
     ),
     path(
-        "restaurants/<int:pk>/detail", views.restaurant_detail, name="restaurant-detail"
+        "restaurants/<int:pk>/detail/",
+        views.restaurant_detail,
+        name="restaurant-detail",
     ),
     path("restaurants/", views.user_restaurant_list, name="user-restaurant-list"),
+    path("restaurants/<int:pk>/reviews/", review_write, name="review-write"),
 ]

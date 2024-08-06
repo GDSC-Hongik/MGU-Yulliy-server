@@ -11,10 +11,12 @@ class Review(models.Model):
         Restaurant, on_delete=models.CASCADE, related_name="reviews"
     )
     content = models.CharField(max_length=255)
-    recommend_count = models.IntegerField()
-    decommend_count = models.IntegerField()
-    parent_id = models.IntegerField(null=True, blank=True)
-    date = models.DateTimeField()
+    recommend_count = models.IntegerField(default=0)
+    decommend_count = models.IntegerField(default=0)
+    parent = models.ForeignKey(
+        "self", null=True, blank=True, on_delete=models.CASCADE, related_name="replies"
+    )
+    date = models.DateTimeField(auto_now_add=True)
 
 
 class Recommend(models.Model):
