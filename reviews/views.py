@@ -4,7 +4,7 @@ from rest_framework import status
 from accounts.models import User
 from restaurants.models import Restaurant
 from .models import Review
-from .serializers import ReviewSerializer
+from .serializers import ReviewSerializer, ReplySerializer
 
 # from rest_framework.authentication import TokenAuthentication
 # from rest_framework.permissions import IsAuthenticated
@@ -23,31 +23,34 @@ def review_write(request, pk):
             {"error": "Restaurant not found"}, status=status.HTTP_404_NOT_FOUND
         )
 
-    request.data["user"] = user.id
-    request.data["restaurant"] = restaurant.id
-
-    try:
-        data = request.data
-    except ValueError:
-        return Response({"detail": "Invalid JSON"}, status=status.HTTP_400_BAD_REQUEST)
-
-    parent_id = data.get("parent")
-    if parent_id:
-        try:
-            parent_review = Review.objects.get(id=parent_id)
-            if parent_review.parent is not None:
-                return Response(
-                    {"error": "Replies to replies are not allowed"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-            data["parent"] = parent_review.id
-        except Review.DoesNotExist:
-            return Response(
-                {"error": "Parent review not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+    data = request.data
+    data["user"] = user.id
+    data["restaurant"] = restaurant.id
 
     serializer = ReviewSerializer(data=data)
     if serializer.is_valid():
         serializer.save(user=user, restaurant=restaurant)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(["POST"])
+# @authentication_classes([TokenAuthentication])
+# @permission_classes([IsAuthenticated])
+def reply_write(request, pk):
+    user = User.objects.get(id=21)  # 임시 유저 지정, 추후 삭제
+
+    try:
+        review = Review.objects.get(id=pk)
+    except Review.DoesNotExist:
+        return Response({"error": "Review not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    data = request.data
+    data["user"] = user.id
+    data["review"] = review.id
+
+    serializer = ReplySerializer(data=data)
+    if serializer.is_valid():
+        serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

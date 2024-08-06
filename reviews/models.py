@@ -13,9 +13,13 @@ class Review(models.Model):
     content = models.CharField(max_length=255)
     recommend_count = models.IntegerField(default=0)
     decommend_count = models.IntegerField(default=0)
-    parent = models.ForeignKey(
-        "self", null=True, blank=True, on_delete=models.CASCADE, related_name="replies"
-    )
+    date = models.DateTimeField(auto_now_add=True)
+
+
+class Reply(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    review = models.ForeignKey(Review, on_delete=models.CASCADE, related_name="replies")
+    content = models.CharField(max_length=255)
     date = models.DateTimeField(auto_now_add=True)
 
 
