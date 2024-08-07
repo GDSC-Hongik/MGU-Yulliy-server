@@ -111,7 +111,7 @@ def user_restaurant_list(request):
         restaurant_ids = user_restaurants.values_list("restaurant_id", flat=True)
         restaurants = Restaurant.objects.filter(id__in=restaurant_ids)
         serializer = RestaurantlistSerializer(restaurants, many=True)
-        return Response({"results": serializer.data}, status=status.HTTP_200_OK)
+        return Response(serializer.data, status=status.HTTP_200_OK)
     except User.DoesNotExist:
         return Response(
             {"message": "Default user not found"}, status=status.HTTP_404_NOT_FOUND
