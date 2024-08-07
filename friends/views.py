@@ -179,7 +179,9 @@ class FriendRequestView(APIView):
     # 친구 수락
     def accept_request(self, request, friend_id):
         # 친구 요청을 보낸 사용자의 id와 일치하는 요청이 있는지 확인
-        friend_request = get_object_or_404(FriendRequest, from_user__id=friend_id)
+        friend_request = get_object_or_404(
+            FriendRequest, from_user__id=friend_id, to_user=request.user
+        )
 
         if friend_request.to_user != request.user:
             return Response({"message": "권한이 없습니다."}, status=status.HTTP_403_FORBIDDEN)
@@ -217,3 +219,32 @@ class FriendRequestView(APIView):
         friend_request.save()
 
         return Response({"message": "친구 신청을 거절했습니다."}, status=status.HTTP_200_OK)
+
+
+@api_view(["DELETE"])
+# @authentication_classes([TokenAuthentication])
+# @permission_classes([IsAuthenticated])
+def delete_friend(request, friend_id):
+    # 친구 객체 삭제
+    friend = get_object_or_404(Friend, user=request.user, friend__id=friend_id)
+    friend.delete()
+    reverse_friend = get_object_or_404(Friend, user__id=friend_id, friend=request.user)
+    reverse_friend.delete()
+
+    # 친구 신청 객체 삭제
+    friend_request = FriendRequest.objects.filter(
+        from_user=request.user, to_user__id=friend_id
+    )
+    if friend_request.exists():
+        friend_request[0].delete()
+    reverse_friend_request = FriendRequest.objects.filter(
+        from_user__id=friend_id, to_user=request.user
+    )
+    if reverse_friend_request.exists():
+        reverse_friend_request[0].delete()
+
+    friend_name = get_object_or_404(User, id=friend_id).name
+
+    return Response(
+        {"message": f"{friend_name}님이 친구목록에서 삭제되었습니다."}, status=status.HTTP_200_OK
+    )
