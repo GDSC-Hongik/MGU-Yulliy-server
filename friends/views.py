@@ -41,7 +41,7 @@ def friend_restaurant_list(request, id):
 
         serializer = RestaurantlistSerializer(restaurants, many=True)
 
-        return Response({"results": serializer.data}, status=status.HTTP_200_OK)
+        return Response(serializer.data, status=status.HTTP_200_OK)
     except User.DoesNotExist:
         return Response(
             {"message": "Friend not found"}, status=status.HTTP_404_NOT_FOUND
