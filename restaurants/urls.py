@@ -19,7 +19,7 @@ urlpatterns = [
         name="restaurant-detail",
     ),
     path("restaurants/", views.user_restaurant_list, name="user-restaurant-list"),
-    path("restaurants/<int:pk>/reviews/", review, name="review-write"),
+    path("restaurants/<int:pk>/reviews/", review, name="review"),
     path(
         "restaurants/<int:restaurant_id>/reviews/<int:review_id>/",
         evaluate_review,

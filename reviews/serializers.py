@@ -35,3 +35,16 @@ class ReviewListSerializer(serializers.ModelSerializer):
             "date",
             "replies_count",
         ]
+
+
+class ReplyListSerializer(serializers.ModelSerializer):
+    user_name = serializers.CharField(source="user.name", read_only=True)
+
+    class Meta:
+        model = Reply
+        fields = [
+            "id",
+            "user_name",
+            "content",
+            "date",
+        ]
