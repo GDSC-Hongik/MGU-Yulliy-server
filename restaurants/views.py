@@ -17,7 +17,8 @@ from .serializers import (
 from django.views.decorators.csrf import csrf_exempt
 import logging
 from accounts.models import User  # 임시 유저 지정을 위한 임포트, 추후 삭제
-from django.db.models import Q
+from django.db.models import Q, Subquery, OuterRef
+from django.utils import timezone
 
 
 @csrf_exempt
@@ -34,10 +35,16 @@ def restaurant_list(request):
 def search(request):
     user = User.objects.get(id=21)  # 임시 유저 지정, 추후 삭제
     if request.method == "GET":
-        histories = SearchHistory.objects.filter(user=user)  # 추후 삭제
-        # histories = SearchHistory.objects.filter(user=request.user)
-        serializer = SearchHistorySerializer(histories, many=True)
-        return Response({"histories": serializer.data})
+        latest_searches = SearchHistory.objects.filter(
+            user=user,
+            id=Subquery(
+                SearchHistory.objects.filter(user=user, query=OuterRef("query"))
+                .order_by("-timestamp")
+                .values("id")[:1]
+            ),
+        )
+        serializer = SearchHistorySerializer(latest_searches, many=True)
+        return Response(serializer.data)
 
     elif request.method == "POST":
         query = request.data.get("query", "")
@@ -47,8 +54,17 @@ def search(request):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        SearchHistory.objects.create(user=user, query=query)  # 추후 삭제
-        # SearchHistory.objects.create(user=request.user, query=query)
+        existing_history = SearchHistory.objects.filter(
+            user=user, query=query
+        ).first()  # 추후 삭제
+        # existing_history = SearchHistory.objects.filter(user=request.user, query=query).first()
+
+        if existing_history:
+            existing_history.timestamp = timezone.now()
+            existing_history.save()
+        else:
+            SearchHistory.objects.create(user=user, query=query)  # 추후 삭제
+            # SearchHistory.objects.create(user=request.user, query=query)
 
         query_terms = query.split()
         q_objects = Q()
@@ -59,7 +75,7 @@ def search(request):
         serializer = RestaurantListSerializer(restaurants, many=True)
         data = serializer.data
         logging.debug("Serialized data: %s", data)
-        return Response({"results": data})
+        return Response(data)
 
     elif request.method == "DELETE":
         history_id = request.data.get("id", "")

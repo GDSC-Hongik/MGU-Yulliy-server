@@ -24,13 +24,11 @@ def review(request, pk):
     한줄평 작성 기능 (POST)
     """
     if request.method == "GET":
-        # 리뷰 조회 기능
         reviews = Review.objects.filter(restaurant_id=pk).order_by("-date")
         serializer = ReviewListSerializer(reviews, many=True)
-        return Response({"results": serializer.data}, status=status.HTTP_200_OK)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     elif request.method == "POST":
-        # 리뷰 작성 기능
         try:
             restaurant = Restaurant.objects.get(pk=pk)
         except Restaurant.DoesNotExist:
