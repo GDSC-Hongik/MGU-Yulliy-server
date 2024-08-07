@@ -26,4 +26,7 @@ class Reply(models.Model):
 class Recommend(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     review = models.ForeignKey(Review, on_delete=models.CASCADE)
-    recommend = models.BooleanField()
+    recommend = models.IntegerField(default=2)  # 0: 싫어요, 1: 좋아요, 2: 기본
+
+    class Meta:
+        unique_together = ("user", "review")
