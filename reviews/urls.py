@@ -3,5 +3,5 @@ from . import views
 
 
 urlpatterns = [
-    path("reviews/<int:pk>/", views.reply_write, name="reply-write"),
+    path("reviews/<int:pk>/", views.reply, name="reply"),
 ]
