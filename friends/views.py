@@ -148,6 +148,11 @@ class FriendRequestView(APIView):
         action = request.data.get("action")
         friend_id = request.data.get("friend_id")
 
+        if friend_id == request.user.id:
+            return Response(
+                {"message": "자기 자신에게는 요청을 보낼 수 없습니다."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         if action == "send":
             return self.send_request(request, friend_id)
         elif action == "accept":
@@ -164,10 +169,26 @@ class FriendRequestView(APIView):
         to_user = get_object_or_404(User, id=friend_id)
         from_user = request.user
 
-        if FriendRequest.objects.filter(from_user=from_user, to_user=to_user).exists():
+        # 이미 요청을 보냈는지 확인
+        if FriendRequest.objects.filter(
+            from_user=from_user, to_user=to_user, state="pending"
+        ).exists():
             return Response(
                 {"message": "이미 친구 요청을 보냈습니다."}, status=status.HTTP_400_BAD_REQUEST
             )
+        # 이미 친구 관계인지 확인, Friend는 양방향이므로 한쪽만 확인해도 됨
+        if Friend.objects.filter(user=from_user, friend=to_user).exists():
+            return Response(
+                {"message": f"이미 {to_user.name}님과 친구입니다."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # 거절된 요청이 있다면 지우고 다시 요청
+        declined_request = FriendRequest.objects.filter(
+            from_user=from_user, to_user=to_user, state="declined"
+        )
+        if declined_request.exists():
+            declined_request[0].delete()
 
         friend_request = FriendRequest(
             from_user=from_user, to_user=to_user, state="pending"
@@ -193,6 +214,13 @@ class FriendRequestView(APIView):
         friend_request.state = "accepted"
         friend_request.save()
 
+        # 내가 상대방에게 보낸 친구요청이 있다면 state를 accepted로 변경
+        reverse_friend_request = FriendRequest.objects.filter(
+            from_user=request.user, to_user__id=friend_id
+        )
+        if reverse_friend_request.exists():
+            reverse_friend_request.update(state="accepted")
+
         # 양방향 친구 관계 설정
         from_user = friend_request.from_user
         to_user = friend_request.to_user
@@ -206,7 +234,9 @@ class FriendRequestView(APIView):
 
     # 친구 거절
     def decline_request(self, request, friend_id):
-        friend_request = get_object_or_404(FriendRequest, from_user__id=friend_id)
+        friend_request = get_object_or_404(
+            FriendRequest, from_user__id=friend_id, to_user=request.user
+        )
 
         if friend_request.to_user != request.user:
             return Response({"message": "권한이 없습니다."}, status=status.HTTP_403_FORBIDDEN)
