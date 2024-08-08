@@ -10,6 +10,7 @@ from rest_framework import status
 # from django.contrib.auth.decorators import login_required
 from restaurants.models import UserRestaurantsList, Restaurant
 from .serializers import (
+    UserSerializer,
     FriendSerializer,
     FriendRequestSerializer,
     RestaurantlistSerializer,
@@ -27,21 +28,47 @@ import random
 from django.shortcuts import get_object_or_404
 
 
-@api_view(["GET"])
-# @login_required
-def friend_restaurant_list(request, id):
+@api_view(["GET", "POST"])
+# @authentication_classes([TokenAuthentication])
+# @permission_classes([IsAuthenticated])
+def friend_restaurant_list(request, pk):
     try:
-        # id에 해당하는 친구를 가져옴
-        friend = User.objects.get(id=id)
+        friend = User.objects.get(pk=pk)
 
-        # 친구의 맛집 리스트를 가져옴
-        friend_restaurants = UserRestaurantsList.objects.filter(user=friend)
-        restaurant_ids = friend_restaurants.values_list("restaurant_id", flat=True)
-        restaurants = Restaurant.objects.filter(id__in=restaurant_ids)
+        if request.method == "GET":
+            friend_restaurants = UserRestaurantsList.objects.filter(user=friend)
+            restaurant_ids = friend_restaurants.values_list("restaurant_id", flat=True)
+            restaurants = Restaurant.objects.filter(id__in=restaurant_ids)
 
-        serializer = RestaurantlistSerializer(restaurants, many=True)
+            friend_info = UserSerializer(friend).data
+            restaurants_data = RestaurantlistSerializer(restaurants, many=True).data
 
-        return Response(serializer.data, status=status.HTTP_200_OK)
+            response_data = {"freind": friend_info, "restaurants": restaurants_data}
+            return Response(response_data, status=status.HTTP_200_OK)
+
+        elif request.method == "POST":
+            evaluate_value = request.data.get("evaluate")
+
+            if evaluate_value not in [0, 1]:  # 0:싫어요 / 1:좋아요
+                return Response(
+                    {"error": "Invalid evaluate value"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            if evaluate_value == 1:
+                friend.reliability += 5
+            elif evaluate_value == 0:
+                friend.reliability -= 5
+            friend.save()
+
+            return Response(
+                {
+                    "message": "Friend evaluated successfully",
+                    "reliability": friend.reliability,
+                },
+                status=status.HTTP_200_OK,
+            )
+
     except User.DoesNotExist:
         return Response(
             {"message": "Friend not found"}, status=status.HTTP_404_NOT_FOUND
