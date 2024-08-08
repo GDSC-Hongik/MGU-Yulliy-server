@@ -96,8 +96,11 @@ def friend_list(request):
                 "restaurant_id", flat=True
             )
         )
+
+        friend_ids = friends.values_list("friend_id", flat=True)
         potential_friends = (
             User.objects.exclude(id=user.id)
+            .exclude(id__in=friend_ids)
             .annotate(
                 common_restaurant_count=Count(
                     "userrestaurantslist__restaurant_id",
@@ -138,8 +141,13 @@ def friend_recommend(request):
                 "restaurant_id", flat=True
             )
         )
+
+        friend_ids = Friend.objects.filter(user=user).values_list(
+            "friend_id", flat=True
+        )
         potential_friends = (
             User.objects.exclude(id=user.id)
+            .exclude(id__in=friend_ids)
             .annotate(
                 common_restaurant_count=Count(
                     "userrestaurantslist__restaurant_id",
