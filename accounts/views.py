@@ -35,7 +35,7 @@ class LoginView(generics.GenericAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(["GET"])
+@api_view(["GET", "PATCH"])
 # @authentication_classes([TokenAuthentication])
 # @permission_classes([IsAuthenticated])
 def profile(request):
@@ -45,6 +45,13 @@ def profile(request):
     if request.method == "GET":
         serializer = ProfileSerializer(user)
         return Response(serializer.data)
+
+    elif request.method == "PATCH":
+        serializer = ProfileSerializer(user, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response({"error": "Invalid data"}, status=status.HTTP_400_BAD_REQUEST)
 
     return Response(
         {"error": "Unsupported method"}, status=status.HTTP_405_METHOD_NOT_ALLOWED
