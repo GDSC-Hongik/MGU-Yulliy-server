@@ -3,7 +3,11 @@ from .models import User
 from rest_framework import generics, status
 from rest_framework.response import Response
 
-from .serializers import RegisterSerializer, LoginSerializer
+from .serializers import RegisterSerializer, LoginSerializer, ProfileSerializer
+from rest_framework.decorators import api_view
+
+# from rest_framework.authentication import TokenAuthentication
+# from rest_framework.permissions import IsAuthenticated
 
 
 class RegisterView(generics.CreateAPIView):
@@ -29,3 +33,19 @@ class LoginView(generics.GenericAPIView):
             )
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(["GET"])
+# @authentication_classes([TokenAuthentication])
+# @permission_classes([IsAuthenticated])
+def profile(request):
+    user = User.objects.get(id=21)  # 임시 유저 지정
+    # user = request.user
+
+    if request.method == "GET":
+        serializer = ProfileSerializer(user)
+        return Response(serializer.data)
+
+    return Response(
+        {"error": "Unsupported method"}, status=status.HTTP_405_METHOD_NOT_ALLOWED
+    )

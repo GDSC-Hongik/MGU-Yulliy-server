@@ -1,4 +1,5 @@
 from .models import User
+from friends.models import Friend
 from django.contrib.auth.password_validation import validate_password  # pw 검증
 from django.contrib.auth import authenticate
 
@@ -66,3 +67,14 @@ class LoginSerializer(serializers.Serializer):
 
         # 가입된 유저가 없을 경우
         raise serializers.ValidationError({"error": "유저 정보가 존재하지 않습니다."})
+
+
+class ProfileSerializer(serializers.ModelSerializer):
+    friend_count = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = ["name", "reliability", "profile_img", "friend_count"]
+
+    def get_friend_count(self, obj):
+        return Friend.objects.filter(user=obj).count()
