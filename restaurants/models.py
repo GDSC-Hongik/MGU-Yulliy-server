@@ -23,7 +23,9 @@ class Restaurant(models.Model):
 
     def rating_average(self):
         ratings = [self.rating_naver, self.rating_kakao, self.rating_google]
-        valid_ratings = [rating for rating in ratings if rating is not None]
+        valid_ratings = [
+            rating for rating in ratings if rating is not None and rating > 0
+        ]
         if valid_ratings:
             return sum(valid_ratings) / len(valid_ratings)
         return 0
