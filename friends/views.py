@@ -197,7 +197,7 @@ def friends(request):
 
             return Response({"message": "친구 신청을 수락했습니다."}, status=status.HTTP_200_OK)
 
-        # 친구 삭제
+        # 친구 거절
         elif action == "decline":
             friend_request = get_object_or_404(
                 FriendRequest, from_user__id=friend_id, to_user=request.user
