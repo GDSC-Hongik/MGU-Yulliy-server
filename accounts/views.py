@@ -17,7 +17,6 @@ from .models import User
 from rest_framework import viewsets
 
 
-@permission_classes([AllowAny])
 class RegisterView(APIView):
     def post(self, request):
         serializer = UserSerializer(data=request.data)
