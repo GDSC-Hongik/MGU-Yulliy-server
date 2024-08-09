@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path, os
 from decouple import config
+import datetime
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -27,7 +28,7 @@ SECRET_KEY = config("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["*", ".pythonanywhere.com"]
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -40,6 +41,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
+    "rest_framework_simplejwt",
     "rest_framework.authtoken",
     "corsheaders",
     "accounts",
@@ -123,7 +125,29 @@ AUTH_PASSWORD_VALIDATORS = [
 # }
 
 
+REST_FRAMEWORK = {
+    # "DEFAULT_AUTHENTICATION_CLASSES": [
+    #   "rest_framework_simplejwt.authentication.JWTAuthentication",
+    # ],
+    "DEFAULT_PERMISSION_CLASSES": (
+        "rest_framework.permissions.IsAuthenticated",
+        "rest_framework.permissions.IsAdminUser",
+        "rest_framework.permissions.AllowAny",
+    ),
+}
+
+
+JWT_AUTH = {
+    "JWT_SECRET_KEY": SECRET_KEY,
+    "JWT_ALGORITHM": "HS256",  # 암호화 알고리즘
+    "JWT_ALLOW_REFRESH": True,  # refresh 사용 여부
+    "JWT_EXPIRATION_DELTA": datetime.timedelta(days=7),  # 유효기간 설정
+    "JWT_REFRESH_EXPIRATION_DELTA": datetime.timedelta(days=28),  # JWT 토큰 갱신 유효기간
+}
+
+
 CORS_ALLOWED_ORIGINS = config("CORS_ALLOWED_ORIGINS", default="").split(",")
+CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOW_METHODS = (
     "DELETE",
