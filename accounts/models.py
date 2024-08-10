@@ -13,7 +13,7 @@ class User(AbstractUser):
     )
 
     profile_img = models.ImageField(
-        default="default_profile_img.jpg", upload_to="profile_imgs"
+        default="default_profile_img.jpg", upload_to="profile_img/"
     )
 
     reliability = models.SmallIntegerField(default=80)
