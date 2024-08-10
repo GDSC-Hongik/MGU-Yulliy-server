@@ -51,6 +51,7 @@ class FriendRequestSerializer(serializers.ModelSerializer):
 class FriendRecommendSerializer(serializers.ModelSerializer):
     common_restaurant_count = serializers.SerializerMethodField()
     common_restaurants = serializers.SerializerMethodField()
+    profile_img = serializers.URLField(source="profile_img.url")
 
     class Meta:
         model = User
