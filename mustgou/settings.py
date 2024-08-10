@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "rest_framework_simplejwt",
-    "rest_framework.authtoken",
     "corsheaders",
     "accounts",
     "friends",
@@ -117,32 +116,21 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# DRF 로그인 유지를 위해 주석처리
-# REST_FRAMEWORK = {
-#     "DEFAULT_AUTHENTICATION_CLASSES": [
-#         "rest_framework.authentication.TokenAuthentication",
-#     ]
-# }
-
 
 REST_FRAMEWORK = {
     # "DEFAULT_AUTHENTICATION_CLASSES": [
-    #   "rest_framework_simplejwt.authentication.JWTAuthentication",
+    #  "rest_framework_simplejwt.authentication.JWTAuthentication",
     # ],
-    "DEFAULT_PERMISSION_CLASSES": (
-        "rest_framework.permissions.IsAuthenticated",
-        "rest_framework.permissions.IsAdminUser",
-        "rest_framework.permissions.AllowAny",
-    ),
+    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
 }
 
 
 JWT_AUTH = {
     "JWT_SECRET_KEY": SECRET_KEY,
-    "JWT_ALGORITHM": "HS256",  # 암호화 알고리즘
-    "JWT_ALLOW_REFRESH": True,  # refresh 사용 여부
-    "JWT_EXPIRATION_DELTA": datetime.timedelta(days=7),  # 유효기간 설정
-    "JWT_REFRESH_EXPIRATION_DELTA": datetime.timedelta(days=28),  # JWT 토큰 갱신 유효기간
+    "JWT_ALGORITHM": "HS256",
+    "JWT_ALLOW_REFRESH": True,
+    "JWT_EXPIRATION_DELTA": datetime.timedelta(days=7),
+    "JWT_REFRESH_EXPIRATION_DELTA": datetime.timedelta(days=28),
 }
 
 
