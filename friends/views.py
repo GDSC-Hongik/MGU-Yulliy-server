@@ -1,13 +1,9 @@
 # from django.shortcuts import render
 from rest_framework.decorators import api_view
 
-# from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.decorators import permission_classes
 from rest_framework.response import Response
 from rest_framework import status
 
-# from django.contrib.auth.decorators import login_required
 from restaurants.models import UserRestaurantsList, Restaurant
 from .serializers import (
     UserSerializer,
@@ -17,11 +13,9 @@ from .serializers import (
     FriendRecommendSerializer,
 )
 
-# from .serializers import FriendSerializer, FriendRequestSerializer
 from accounts.models import User
 from .models import Friend, FriendRequest
 
-# from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Count, Q
 import random
 
@@ -29,8 +23,6 @@ from django.shortcuts import get_object_or_404
 
 
 @api_view(["GET", "POST"])
-# @authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
 def friend_restaurant_list(request, pk):
     try:
         friend = User.objects.get(pk=pk)
@@ -76,8 +68,6 @@ def friend_restaurant_list(request, pk):
 
 
 @api_view(["GET", "POST", "DELETE"])
-# @authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
 def friends(request):
     # friends_list
     if request.method == "GET":
@@ -279,8 +269,6 @@ def friends(request):
 
 
 @api_view(["GET"])
-# @authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
 def friend_recommend(request):
     try:
         # user = request.user
