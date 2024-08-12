@@ -8,12 +8,13 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from django.contrib.auth.hashers import check_password
 from rest_framework.permissions import AllowAny
-from rest_framework.decorators import permission_classes
+from rest_framework.decorators import permission_classes, authentication_classes
 
 from friends.models import Friend, FriendRequest
 from .models import User
 
 
+@authentication_classes([])
 @permission_classes([AllowAny])
 class RegisterView(APIView):
     def post(self, request):
@@ -44,6 +45,7 @@ class RegisterView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+@authentication_classes([])
 @permission_classes([AllowAny])
 class LoginView(APIView):
     def post(self, request):
