@@ -7,14 +7,11 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from django.contrib.auth.hashers import check_password
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import AllowAny
 from rest_framework.decorators import permission_classes
 
 from friends.models import Friend, FriendRequest
 from .models import User
-
-# 테스트용
-from rest_framework import viewsets
 
 
 @permission_classes([AllowAny])
@@ -114,15 +111,6 @@ class LogoutView(APIView):
         return response
 
 
-# jwt 토근 인증 확인용 뷰셋
-# Header - Authorization : Bearer <발급받은토큰>
-class UserViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-
-
-@permission_classes([IsAuthenticated])
 class DeleteUserView(APIView):
     # 회원삭제
     def delete(self, request):
@@ -146,8 +134,6 @@ class DeleteUserView(APIView):
 
 
 @api_view(["GET", "PATCH"])
-# @authentication_classes([TokenAuthentication])
-# @permission_classes([IsAuthenticated])
 def profile(request):
     user = User.objects.get(id=21)  # 임시 유저 지정
     # user = request.user
