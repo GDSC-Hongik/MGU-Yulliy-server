@@ -99,18 +99,6 @@ class LoginView(APIView):
             )
 
 
-class LogoutView(APIView):
-    # 로그아웃
-    def delete(self, request):
-        # 쿠키에 저장된 토큰 삭제 => 로그아웃 처리
-        response = Response(
-            {"message": "Logout success"}, status=status.HTTP_202_ACCEPTED
-        )
-        response.delete_cookie("access")
-        response.delete_cookie("refresh")
-        return response
-
-
 class DeleteUserView(APIView):
     # 회원삭제
     def delete(self, request):
