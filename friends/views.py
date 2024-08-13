@@ -1,9 +1,6 @@
-# from django.shortcuts import render
 from rest_framework.decorators import api_view
-
 from rest_framework.response import Response
 from rest_framework import status
-
 from restaurants.models import UserRestaurantsList, Restaurant
 from .serializers import (
     UserSerializer,
@@ -12,13 +9,10 @@ from .serializers import (
     RestaurantlistSerializer,
     FriendRecommendSerializer,
 )
-
 from accounts.models import User
 from .models import Friend, FriendRequest
-
 from django.db.models import Count, Q
 import random
-
 from django.shortcuts import get_object_or_404
 
 

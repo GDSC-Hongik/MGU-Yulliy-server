@@ -11,18 +11,9 @@ from .serializers import (
     ReplyListSerializer,
 )
 
-# from rest_framework.authentication import TokenAuthentication
-# from rest_framework.permissions import IsAuthenticated
-
 
 @api_view(["GET", "POST"])
-# @authentication_classes([TokenAuthentication])
-# @permission_classes([IsAuthenticated])
 def review(request, pk):
-    """
-    한줄평 더보기 기능 (GET)
-    한줄평 작성 기능 (POST)
-    """
     if request.method == "GET":
         reviews = Review.objects.filter(restaurant_id=pk).order_by("-date")
         serializer = ReviewListSerializer(reviews, many=True)
@@ -50,8 +41,6 @@ def review(request, pk):
 
 
 @api_view(["GET", "POST"])
-# @authentication_classes([TokenAuthentication])
-# @permission_classes([IsAuthenticated])
 def reply(request, pk):
     if request.method == "GET":
         replies = Reply.objects.filter(review_id=pk).order_by("date")

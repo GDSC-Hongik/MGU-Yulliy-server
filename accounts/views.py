@@ -134,6 +134,7 @@ class DeleteUserView(APIView):
 
 
 @api_view(["GET", "PATCH"])
+@permission_classes([AllowAny])
 def profile(request):
     user = User.objects.get(id=21)  # 임시 유저 지정
     # user = request.user
