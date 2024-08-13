@@ -66,8 +66,7 @@ def friends(request):
     # friends_list
     if request.method == "GET":
         try:
-            # user = request.user
-            user = User.objects.get(id=21)
+            user = request.user
 
             friend_request = FriendRequest.objects.filter(to_user=user, state="pending")
             friend_request_serialized = FriendRequestSerializer(
@@ -265,8 +264,7 @@ def friends(request):
 @api_view(["GET"])
 def friend_recommend(request):
     try:
-        # user = request.user
-        user = User.objects.get(id=21)
+        user = request.user
 
         user_restaurants = set(
             UserRestaurantsList.objects.filter(user=user).values_list(
