@@ -47,8 +47,8 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ["name", "reliability", "profile_img", "friend_count"]
-        read_only_fields = ["reliability", "friend_count"]
+        fields = ["id", "name", "reliability", "profile_img", "friend_count"]
+        read_only_fields = ["id", "reliability", "friend_count"]
 
     def get_friend_count(self, obj):
         return Friend.objects.filter(user=obj).count()
