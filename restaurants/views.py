@@ -94,9 +94,7 @@ def search(request):
 @api_view(["GET"])
 def user_restaurant_list(request):
     try:
-        user = User.objects.get(id=21)  # 임시 유저 지정, 추후 삭제
-        user_restaurants = UserRestaurantsList.objects.filter(user=user)  # 추후 삭제
-        # user_restaurants = UserRestaurantsList.objects.filter(user=request.user)
+        user_restaurants = UserRestaurantsList.objects.filter(user=request.user)
         restaurant_ids = user_restaurants.values_list("restaurant_id", flat=True)
         restaurants = Restaurant.objects.filter(id__in=restaurant_ids)
         serializer = RestaurantlistSerializer(restaurants, many=True)
@@ -109,23 +107,17 @@ def user_restaurant_list(request):
 
 @api_view(["POST", "DELETE"])
 def add_remove_restaurant(request, pk):
-    user = User.objects.get(id=21)  # 임시 유저 지정, 추후 삭제
     try:
         restaurant = Restaurant.objects.get(pk=pk)
         if request.method == "POST":
-            UserRestaurantsList.objects.create(
-                user=user, restaurant=restaurant
-            )  # 추후 삭제
-            # UserRestaurantsList.objects.create(user=request.user, restaurant=restaurant)
+            UserRestaurantsList.objects.create(user=request.user, restaurant=restaurant)
             return Response(
                 {"message": "Restaurant added successfully"},
                 status=status.HTTP_201_CREATED,
             )
         elif request.method == "DELETE":
             user_restaurant = UserRestaurantsList.objects.get(
-                # user=request.user, restaurant=restaurant
-                user=user,
-                restaurant=restaurant,  # 추후 삭제
+                user=request.user, restaurant=restaurant
             )
             user_restaurant.delete()
             return Response(
