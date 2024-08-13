@@ -12,7 +12,7 @@ class RestaurantSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
     def get_rating_average(self, obj):
-        return obj.rating_average()
+        return str(obj.rating_average())
 
 
 class RestaurantListSerializer(serializers.ModelSerializer):
@@ -29,7 +29,7 @@ class RestaurantListSerializer(serializers.ModelSerializer):
         ]
 
     def get_rating_average(self, obj):
-        return obj.rating_average()
+        return str(obj.rating_average())
 
 
 class SearchHistorySerializer(serializers.ModelSerializer):
@@ -55,7 +55,7 @@ class RestaurantlistSerializer(serializers.ModelSerializer):
         ]
 
     def get_rating_average(self, obj):
-        return obj.rating_average()
+        return str(obj.rating_average())
 
     def get_image_url(self, obj):
         if obj.image_url:  # image_url이 null이 아닌 경우에만 처리
@@ -87,4 +87,4 @@ class RestaurantDetailSerializer(serializers.ModelSerializer):
         return serializer.data
 
     def get_rating_average(self, obj):
-        return obj.rating_average()
+        return str(obj.rating_average())
