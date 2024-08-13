@@ -1,4 +1,3 @@
-# from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
@@ -10,18 +9,12 @@ from .serializers import (
     RestaurantlistSerializer,
     RestaurantDetailSerializer,
 )
-
-# from rest_framework.authentication import TokenAuthentication
-from rest_framework.decorators import permission_classes
-from rest_framework.permissions import IsAuthenticated
-from django.views.decorators.csrf import csrf_exempt
 import logging
 from accounts.models import User  # 임시 유저 지정을 위한 임포트, 추후 삭제
 from django.db.models import Q, Subquery, OuterRef
 from django.utils import timezone
 
 
-@csrf_exempt
 @api_view(["GET"])
 def restaurant_list(request):
     restaurants = Restaurant.objects.all()
@@ -30,8 +23,6 @@ def restaurant_list(request):
 
 
 @api_view(["GET", "POST", "DELETE"])
-# @authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
 def search(request):
     user = User.objects.get(id=21)  # 임시 유저 지정, 추후 삭제
     if request.method == "GET":
@@ -100,10 +91,7 @@ def search(request):
         )
 
 
-@csrf_exempt
 @api_view(["GET"])
-# @authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
 def user_restaurant_list(request):
     try:
         user = User.objects.get(id=21)  # 임시 유저 지정, 추후 삭제
@@ -119,10 +107,7 @@ def user_restaurant_list(request):
         )
 
 
-@csrf_exempt
 @api_view(["POST", "DELETE"])
-# @authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
 def add_remove_restaurant(request, pk):
     user = User.objects.get(id=21)  # 임시 유저 지정, 추후 삭제
     try:
@@ -159,8 +144,6 @@ def add_remove_restaurant(request, pk):
 
 
 @api_view(["GET"])
-# @authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
 def restaurant_detail(request, pk):
     try:
         restaurant = Restaurant.objects.prefetch_related("reviews").get(pk=pk)
