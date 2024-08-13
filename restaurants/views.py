@@ -10,21 +10,23 @@ from .serializers import (
     RestaurantDetailSerializer,
 )
 import logging
-from accounts.models import User  # 임시 유저 지정을 위한 임포트, 추후 삭제
+from accounts.models import User
 from django.db.models import Q, Subquery, OuterRef
 from django.utils import timezone
 
 
 @api_view(["GET"])
 def restaurant_list(request):
-    restaurants = Restaurant.objects.all()
+    user = request.user
+    restaurants = Restaurant.objects.filter(user=user)
     serializer = RestaurantSerializer(restaurants, many=True)
     return Response(serializer.data)
 
 
 @api_view(["GET", "POST", "DELETE"])
 def search(request):
-    user = User.objects.get(id=21)  # 임시 유저 지정, 추후 삭제
+    user = request.user
+
     if request.method == "GET":
         latest_searches = SearchHistory.objects.filter(
             user=user,
@@ -45,17 +47,13 @@ def search(request):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        existing_history = SearchHistory.objects.filter(
-            user=user, query=query
-        ).first()  # 추후 삭제
-        # existing_history = SearchHistory.objects.filter(user=request.user, query=query).first()
+        existing_history = SearchHistory.objects.filter(user=user, query=query).first()
 
         if existing_history:
             existing_history.timestamp = timezone.now()
             existing_history.save()
         else:
-            SearchHistory.objects.create(user=user, query=query)  # 추후 삭제
-            # SearchHistory.objects.create(user=request.user, query=query)
+            SearchHistory.objects.create(user=user, query=query)
 
         query_terms = query.split()
         q_objects = Q()
@@ -94,9 +92,8 @@ def search(request):
 @api_view(["GET"])
 def user_restaurant_list(request):
     try:
-        user = User.objects.get(id=21)  # 임시 유저 지정, 추후 삭제
-        user_restaurants = UserRestaurantsList.objects.filter(user=user)  # 추후 삭제
-        # user_restaurants = UserRestaurantsList.objects.filter(user=request.user)
+        user = request.user
+        user_restaurants = UserRestaurantsList.objects.filter(user=user)
         restaurant_ids = user_restaurants.values_list("restaurant_id", flat=True)
         restaurants = Restaurant.objects.filter(id__in=restaurant_ids)
         serializer = RestaurantlistSerializer(restaurants, many=True)
@@ -109,23 +106,18 @@ def user_restaurant_list(request):
 
 @api_view(["POST", "DELETE"])
 def add_remove_restaurant(request, pk):
-    user = User.objects.get(id=21)  # 임시 유저 지정, 추후 삭제
+    user = request.user
     try:
         restaurant = Restaurant.objects.get(pk=pk)
         if request.method == "POST":
-            UserRestaurantsList.objects.create(
-                user=user, restaurant=restaurant
-            )  # 추후 삭제
-            # UserRestaurantsList.objects.create(user=request.user, restaurant=restaurant)
+            UserRestaurantsList.objects.create(user=user, restaurant=restaurant)
             return Response(
                 {"message": "Restaurant added successfully"},
                 status=status.HTTP_201_CREATED,
             )
         elif request.method == "DELETE":
             user_restaurant = UserRestaurantsList.objects.get(
-                # user=request.user, restaurant=restaurant
-                user=user,
-                restaurant=restaurant,  # 추후 삭제
+                user=user, restaurant=restaurant
             )
             user_restaurant.delete()
             return Response(
