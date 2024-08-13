@@ -136,6 +136,7 @@ class DeleteUserView(APIView):
 
 
 @api_view(["GET", "PATCH"])
+@permission_classes([AllowAny])
 def profile(request):
     user = request.user
 
