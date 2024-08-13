@@ -14,6 +14,7 @@ from friends.models import Friend, FriendRequest
 from .models import User
 
 
+@authentication_classes([])
 @permission_classes([AllowAny])
 class RegisterView(APIView):
     def post(self, request):
@@ -44,6 +45,7 @@ class RegisterView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+@authentication_classes([])
 @permission_classes([AllowAny])
 class LoginView(APIView):
     def post(self, request):
