@@ -5,9 +5,19 @@ from accounts.models import User
 
 
 class UserSerializer(serializers.ModelSerializer):
+    is_evaluated = serializers.SerializerMethodField()
+
     class Meta:
         model = User
-        fields = ["id", "name", "profile_img", "reliability"]
+        fields = ["id", "name", "profile_img", "reliability", "is_evaluated"]
+
+    def get_is_evaluated(self, obj):
+        user = self.context["request"].user
+        try:
+            friend = Friend.objects.get(user=user, friend=obj)
+            return friend.is_evaluated
+        except Friend.DoesNotExist:
+            return False
 
 
 class FriendRequestSerializer(serializers.ModelSerializer):
