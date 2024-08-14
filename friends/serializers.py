@@ -138,7 +138,8 @@ class RestaurantlistSerializer(serializers.ModelSerializer):
             base_url = "https://mugou.s3.ap-southeast-2.amazonaws.com/images/"
             image_name = f"{obj.name}.jpg"  # 식당 이름을 사용하여 이미지 파일명 생성
             return f"{base_url}{image_name}"
-        return None
+        else:
+            return "https://mugou.s3.ap-southeast-2.amazonaws.com/images/default_profile_img.jpg"
 
 
 class RestaurantSerializer(serializers.ModelSerializer):
