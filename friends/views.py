@@ -277,7 +277,7 @@ def friend_recommend(request):
         )
 
         requested_friend_ids = Friend.objects.filter(
-            Q(from_user=user) | Q(to_user=user)
+            Q(from_user=user, state="pending") | Q(to_user=user, state="pending")
         ).values_list("requested_friend_id", flat=True)
 
         potential_friends = (
