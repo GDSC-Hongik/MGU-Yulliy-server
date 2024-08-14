@@ -62,7 +62,8 @@ class RestaurantlistSerializer(serializers.ModelSerializer):
             base_url = "https://mugou.s3.ap-southeast-2.amazonaws.com/images/"
             image_name = f"{obj.name}.jpg"  # 식당 이름을 사용하여 이미지 파일명 생성
             return f"{base_url}{image_name}"
-        return None
+        else:
+            return "https://mugou.s3.ap-southeast-2.amazonaws.com/images/default_profile_img.jpg"
 
 
 class UserRestaurantListSerializer(serializers.ModelSerializer):
@@ -76,6 +77,7 @@ class UserRestaurantListSerializer(serializers.ModelSerializer):
 class RestaurantDetailSerializer(serializers.ModelSerializer):
     reviews = serializers.SerializerMethodField()
     rating_average = serializers.SerializerMethodField()
+    image_url = serializers.SerializerMethodField()
 
     class Meta:
         model = Restaurant
@@ -88,3 +90,11 @@ class RestaurantDetailSerializer(serializers.ModelSerializer):
 
     def get_rating_average(self, obj):
         return str(obj.rating_average())
+
+    def get_image_url(self, obj):
+        if obj.image_url:  # image_url이 null이 아닌 경우에만 처리
+            base_url = "https://mugou.s3.ap-southeast-2.amazonaws.com/images/"
+            image_name = f"{obj.name}.jpg"  # 식당 이름을 사용하여 이미지 파일명 생성
+            return f"{base_url}{image_name}"
+        else:
+            return "https://mugou.s3.ap-southeast-2.amazonaws.com/images/default_profile_img.jpg"
