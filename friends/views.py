@@ -26,7 +26,7 @@ def friend_restaurant_list(request, pk):
             restaurant_ids = friend_restaurants.values_list("restaurant_id", flat=True)
             restaurants = Restaurant.objects.filter(id__in=restaurant_ids)
 
-            friend_info = UserSerializer(friend).data
+            friend_info = UserSerializer(friend, context={"request": request}).data
             restaurants_data = RestaurantlistSerializer(restaurants, many=True).data
 
             response_data = {"friend": friend_info, "restaurants": restaurants_data}

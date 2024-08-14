@@ -5,6 +5,7 @@ from accounts.models import User
 class Friend(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="friends")
     friend = models.ForeignKey(User, on_delete=models.CASCADE, related_name="friend_of")
+    is_evaluated = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
