@@ -1,5 +1,6 @@
 from django.db import models
 from accounts.models import User
+from decimal import Decimal, ROUND_HALF_UP
 
 # Create your models here.
 
@@ -27,8 +28,9 @@ class Restaurant(models.Model):
             rating for rating in ratings if rating is not None and rating > 0
         ]
         if valid_ratings:
-            return sum(valid_ratings) / len(valid_ratings)
-        return 0
+            average = sum(valid_ratings) / len(valid_ratings)
+            return Decimal(average).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+        return Decimal("0.00")
 
 
 class SearchHistory(models.Model):

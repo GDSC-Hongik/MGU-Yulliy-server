@@ -1,7 +1,6 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from accounts.models import User
 from restaurants.models import Restaurant
 from .models import Review, Recommend, Reply
 from .serializers import (
@@ -27,8 +26,7 @@ def review(request, pk):
                 {"error": "Restaurant not found"}, status=status.HTTP_404_NOT_FOUND
             )
 
-        user = User.objects.get(id=21)  # 임시 유저 지정, 추후 삭제
-
+        user = request.user
         data = request.data
         data["user"] = user.id
         data["restaurant"] = restaurant.id
@@ -48,8 +46,6 @@ def reply(request, pk):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     elif request.method == "POST":
-        user = User.objects.get(id=21)  # 임시 유저 지정, 추후 삭제
-
         try:
             review = Review.objects.get(id=pk)
         except Review.DoesNotExist:
@@ -57,6 +53,7 @@ def reply(request, pk):
                 {"error": "Review not found"}, status=status.HTTP_404_NOT_FOUND
             )
 
+        user = request.user
         data = request.data
         data["user"] = user.id
         data["review"] = review.id
@@ -75,7 +72,7 @@ def evaluate_review(request, restaurant_id, review_id):
     """
     try:
         review = Review.objects.get(id=review_id, restaurant_id=restaurant_id)
-        user = User.objects.get(id=21)  # 임시 유저 지정, 추후 삭제
+        user = request.user
 
         # 사용자가 이미 평가했는지 확인
         recommend_entry, created = Recommend.objects.get_or_create(
@@ -83,7 +80,7 @@ def evaluate_review(request, restaurant_id, review_id):
         )
 
         evaluation = request.data.get("evaluation")
-        if evaluation == "1":
+        if evaluation == "1" or evaluation == 1:
             # 좋아요
             if created or recommend_entry.recommend != 1:
                 review.recommend_count += 1
@@ -91,7 +88,7 @@ def evaluate_review(request, restaurant_id, review_id):
                     review.decommend_count -= 1
                 recommend_entry.recommend = 1
 
-        elif evaluation == "0":
+        elif evaluation == "0" or evaluation == 0:
             # 싫어요
             if created or recommend_entry.recommend != 0:
                 review.decommend_count += 1

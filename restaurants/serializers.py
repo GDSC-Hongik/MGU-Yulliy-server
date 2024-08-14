@@ -12,7 +12,7 @@ class RestaurantSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
     def get_rating_average(self, obj):
-        return obj.rating_average()
+        return str(obj.rating_average())
 
 
 class RestaurantListSerializer(serializers.ModelSerializer):
@@ -29,7 +29,7 @@ class RestaurantListSerializer(serializers.ModelSerializer):
         ]
 
     def get_rating_average(self, obj):
-        return obj.rating_average()
+        return str(obj.rating_average())
 
 
 class SearchHistorySerializer(serializers.ModelSerializer):
@@ -55,14 +55,15 @@ class RestaurantlistSerializer(serializers.ModelSerializer):
         ]
 
     def get_rating_average(self, obj):
-        return obj.rating_average()
+        return str(obj.rating_average())
 
     def get_image_url(self, obj):
         if obj.image_url:  # image_url이 null이 아닌 경우에만 처리
             base_url = "https://mugou.s3.ap-southeast-2.amazonaws.com/images/"
             image_name = f"{obj.name}.jpg"  # 식당 이름을 사용하여 이미지 파일명 생성
             return f"{base_url}{image_name}"
-        return None
+        else:
+            return "https://mugou.s3.ap-southeast-2.amazonaws.com/images/default_profile_img.jpg"
 
 
 class UserRestaurantListSerializer(serializers.ModelSerializer):
@@ -76,6 +77,8 @@ class UserRestaurantListSerializer(serializers.ModelSerializer):
 class RestaurantDetailSerializer(serializers.ModelSerializer):
     reviews = serializers.SerializerMethodField()
     rating_average = serializers.SerializerMethodField()
+    image_url = serializers.SerializerMethodField()
+    isExist = serializers.SerializerMethodField()
 
     class Meta:
         model = Restaurant
@@ -87,4 +90,18 @@ class RestaurantDetailSerializer(serializers.ModelSerializer):
         return serializer.data
 
     def get_rating_average(self, obj):
-        return obj.rating_average()
+        return str(obj.rating_average())
+
+    def get_isExist(self, obj):
+        request = self.context.get("request")
+        return UserRestaurantsList.objects.filter(
+            user=request.user, restaurant=obj
+        ).exists()
+
+    def get_image_url(self, obj):
+        if obj.image_url:  # image_url이 null이 아닌 경우에만 처리
+            base_url = "https://mugou.s3.ap-southeast-2.amazonaws.com/images/"
+            image_name = f"{obj.name}.jpg"  # 식당 이름을 사용하여 이미지 파일명 생성
+            return f"{base_url}{image_name}"
+        else:
+            return "https://mugou.s3.ap-southeast-2.amazonaws.com/images/default_profile_img.jpg"
