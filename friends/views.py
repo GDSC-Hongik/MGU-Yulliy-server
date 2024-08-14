@@ -29,7 +29,7 @@ def friend_restaurant_list(request, pk):
             friend_info = UserSerializer(friend).data
             restaurants_data = RestaurantlistSerializer(restaurants, many=True).data
 
-            response_data = {"freind": friend_info, "restaurants": restaurants_data}
+            response_data = {"friend": friend_info, "restaurants": restaurants_data}
             return Response(response_data, status=status.HTTP_200_OK)
 
         elif request.method == "POST":
