@@ -80,7 +80,7 @@ def evaluate_review(request, restaurant_id, review_id):
         )
 
         evaluation = request.data.get("evaluation")
-        if evaluation == "1":
+        if evaluation == "1" or evaluation == 1:
             # 좋아요
             if created or recommend_entry.recommend != 1:
                 review.recommend_count += 1
@@ -88,7 +88,7 @@ def evaluate_review(request, restaurant_id, review_id):
                     review.decommend_count -= 1
                 recommend_entry.recommend = 1
 
-        elif evaluation == "0":
+        elif evaluation == "0" or evaluation == 0:
             # 싫어요
             if created or recommend_entry.recommend != 0:
                 review.decommend_count += 1
