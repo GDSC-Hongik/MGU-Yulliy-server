@@ -139,7 +139,9 @@ def add_remove_restaurant(request, pk):
 def restaurant_detail(request, pk):
     try:
         restaurant = Restaurant.objects.prefetch_related("reviews").get(pk=pk)
-        serializer = RestaurantDetailSerializer(restaurant)
+        serializer = RestaurantDetailSerializer(
+            restaurant, context={"request": request}
+        )
         return Response(serializer.data)
     except Restaurant.DoesNotExist:
         return Response(
