@@ -83,9 +83,17 @@ def friends(request):
             )
 
             friend_ids = friends.values_list("friend_id", flat=True)
+            requested_from_friend_ids = FriendRequest.objects.filter(
+                to_user=user, state="pending"
+            ).values_list("from_user_id", flat=True)
+            requested_to_friend_ids = FriendRequest.objects.filter(
+                from_user=user, state="pending"
+            ).values_list("to_user_id", flat=True)
             potential_friends = (
                 User.objects.exclude(id=user.id)
                 .exclude(id__in=friend_ids)
+                .exclude(id__in=requested_from_friend_ids)
+                .exclude(id__in=requested_to_friend_ids)
                 .annotate(
                     common_restaurant_count=Count(
                         "userrestaurantslist__restaurant_id",
@@ -275,15 +283,18 @@ def friend_recommend(request):
         friend_ids = Friend.objects.filter(user=user).values_list(
             "friend_id", flat=True
         )
-
-        requested_friend_ids = Friend.objects.filter(
-            Q(from_user=user, state="pending") | Q(to_user=user, state="pending")
-        ).values_list("requested_friend_id", flat=True)
+        requested_from_friend_ids = FriendRequest.objects.filter(
+            to_user=user, state="pending"
+        ).values_list("from_user_id", flat=True)
+        requested_to_friend_ids = FriendRequest.objects.filter(
+            from_user=user, state="pending"
+        ).values_list("to_user_id", flat=True)
 
         potential_friends = (
             User.objects.exclude(id=user.id)
             .exclude(id__in=friend_ids)
-            .exclude(id__in=requested_friend_ids)
+            .exclude(id__in=requested_from_friend_ids)
+            .exclude(id__in=requested_to_friend_ids)
             .annotate(
                 common_restaurant_count=Count(
                     "userrestaurantslist__restaurant_id",
