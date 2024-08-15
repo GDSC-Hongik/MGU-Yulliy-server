@@ -5,6 +5,7 @@ from accounts.models import User
 
 
 class UserSerializer(serializers.ModelSerializer):
+    profile_img = serializers.URLField(source="profile_img.url")
     is_evaluated = serializers.SerializerMethodField()
 
     class Meta:
