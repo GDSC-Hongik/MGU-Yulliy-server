@@ -47,10 +47,17 @@ def friend_restaurant_list(request, pk):
                 friend.reliability -= 5
             friend.save()
 
+            check_evaluation = Friend.objects.get(user=request.user, friend=friend)
+            check_evaluation.is_evaluated = True
+            check_evaluation.save()
+
             return Response(
                 {
                     "message": "Friend evaluated successfully",
                     "reliability": friend.reliability,
+                    "is_Evaluated": Friend.objects.get(
+                        user=request.user, friend=friend
+                    ).is_evaluated,
                 },
                 status=status.HTTP_200_OK,
             )
