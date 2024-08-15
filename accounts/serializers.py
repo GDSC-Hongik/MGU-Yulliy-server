@@ -52,3 +52,6 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     def get_friend_count(self, obj):
         return Friend.objects.filter(user=obj).count()
+
+    def update(self, instance, validated_data):
+        return super().update(instance, validated_data)

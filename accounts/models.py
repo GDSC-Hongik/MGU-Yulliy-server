@@ -1,5 +1,19 @@
+import os
+from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.core.files.storage import FileSystemStorage
+
+
+def profile_img_upload_to(instance, filename):
+    return f"profile_img/{instance.id}.jpg"
+
+
+class OverwriteStorage(FileSystemStorage):
+    def get_aavailable_name(self, name):
+        if self.exists(name):
+            os.remove(os.path.join(settings.MEDIA_ROOT, name))
+        return name
 
 
 class User(AbstractUser):
@@ -13,7 +27,9 @@ class User(AbstractUser):
     )
 
     profile_img = models.ImageField(
-        default="default_profile_img.jpg", upload_to="profile_img/"
+        default="default_profile_img.jpg",
+        upload_to=profile_img_upload_to,
+        storage=OverwriteStorage(),
     )
 
     reliability = models.SmallIntegerField(default=80)
