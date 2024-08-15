@@ -55,7 +55,7 @@ def friend_restaurant_list(request, pk):
                 {
                     "message": "Friend evaluated successfully",
                     "reliability": friend.reliability,
-                    "is_Evaluated": Friend.objects.get(
+                    "is_evaluated": Friend.objects.get(
                         user=request.user, friend=friend
                     ).is_evaluated,
                 },
